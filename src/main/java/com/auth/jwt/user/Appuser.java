@@ -24,6 +24,7 @@ public class Appuser {
     @Column(length = 150, nullable = false)
     private String email;
 
+    @ManyToMany(fetch = FetchType.EAGER)
     private Collection<Role> roles = new ArrayList<>();
 
 
