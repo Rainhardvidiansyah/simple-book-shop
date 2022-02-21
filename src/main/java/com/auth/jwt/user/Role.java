@@ -1,9 +1,6 @@
 package com.auth.jwt.user;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class Role {
@@ -13,4 +10,7 @@ public class Role {
     private Long id;
 
     private String roleName;
+
+    @Enumerated(EnumType.STRING)
+    private ERole eRole;
 }

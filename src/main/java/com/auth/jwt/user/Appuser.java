@@ -27,5 +27,10 @@ public class Appuser {
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<Role> roles = new ArrayList<>();
 
-
+    public Appuser(Long id, String fullName, String password, String email) {
+        this.id = id;
+        this.fullName = fullName;
+        this.password = password;
+        this.email = email;
+    }
 }
