@@ -2,7 +2,7 @@ package com.auth.jwt.service;
 
 import com.auth.jwt.repository.RoleRepo;
 import com.auth.jwt.repository.UserRepo;
-import com.auth.jwt.user.Appuser;
+import com.auth.jwt.user.AppUser;
 import com.auth.jwt.user.Role;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class AppuserService {
     @Autowired
     private RoleRepo roleRepo;
 
-    public Appuser saveUser(Appuser appuser){
+    public AppUser saveUser(AppUser appuser){
         return userRepo.save(appuser);
     }
 
@@ -28,25 +28,25 @@ public class AppuserService {
         return roleRepo.save(role);
     }
 
-    public void addRoleToUser(String email, String roleName){
-        log.info("add user {} to role {}", email, roleName);
-        Appuser appuser = userRepo.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("test"));
-        Role role = roleRepo.findByRoleName(roleName)
-                .orElseThrow(() -> new RuntimeException("testdua"));
-        appuser.getRoles().add(role);
-    }
+//    public void addRoleToUser(String email, String roleName){
+//        log.info("add user {} to role {}", email, roleName);
+//        AppUser appuser = userRepo.findByEmail(email)
+//                .orElseThrow(() -> new RuntimeException("test"));
+//        Role role = roleRepo.findByRoleName(roleName)
+//                .orElseThrow(() -> new RuntimeException("testdua"));
+//        appuser.getRoles().add(role);
+//    }
 
-    public Appuser getUserName(String email){
+    public AppUser getUserName(String email){
         return userRepo.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User Tidak ada"));
+                .orElseThrow(() -> new RuntimeException("User not found!"));
     }
 
-    public Appuser fetchUserFullName(String fullName){
+    public AppUser fetchUserFullName(String fullName){
         return userRepo.findByFullName(fullName);
     }
 
-    public List<Appuser> getAllUser(){
+    public List<AppUser> getAllUser(){
         return userRepo.findAll();
     }
 

@@ -1,16 +1,23 @@
 package com.auth.jwt.user;
 
+import lombok.*;
+
 import javax.persistence.*;
 
-@Entity
+@Entity @Table(name = "role")
+@Getter
+@Setter
+@AllArgsConstructor @NoArgsConstructor @ToString
 public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String roleName;
-
     @Enumerated(EnumType.STRING)
-    private ERole eRole;
+    private ERole roleName;
+
+    public Role(ERole roleName) {
+        this.roleName = roleName;
+    }
 }

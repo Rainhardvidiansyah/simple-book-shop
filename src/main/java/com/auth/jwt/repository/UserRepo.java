@@ -1,13 +1,13 @@
 package com.auth.jwt.repository;
 
-import com.auth.jwt.user.Appuser;
+import com.auth.jwt.user.AppUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface UserRepo extends JpaRepository<Appuser, Long> {
+public interface UserRepo extends JpaRepository<AppUser, Long> {
 
-    Optional<Appuser> findByEmail(String email);
+    Optional<AppUser> findByEmail(String email);
 
-    Appuser findByFullName(String fullName);
+    AppUser findByFullName(String fullName);
 }
