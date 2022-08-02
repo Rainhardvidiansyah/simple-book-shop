@@ -8,10 +8,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/user")
@@ -22,7 +28,8 @@ public class RegistrationController {
     private final RegistrationService registrationService;
 
     @PostMapping("/registration")
-    public ResponseEntity<?> registration(@RequestBody RegistrationRequest request){
+    public ResponseEntity<?> registration(@Valid @RequestBody RegistrationRequest request, Errors errors){
+        m(errors);
         boolean userExisting = registrationService.checkUserExisting(request.getEmail());
         if(userExisting){
             return new ResponseEntity<>(String.format("%s has been registered", request.getEmail()),
@@ -35,6 +42,17 @@ public class RegistrationController {
         AppUser savedUser = registrationService.registrationUser(user);
         log.info("User just registered {}", user);
         return new ResponseEntity<>(RegistrationResponseDto.registrationResponse(user), HttpStatus.OK);
+    }
+
+
+    private static List<String> m(Errors errors){
+        List<String> errorMessages = new ArrayList<>();
+        if(errors.hasErrors()){
+            for(ObjectError objectError : errors.getAllErrors()){
+                errorMessages.add(objectError.getDefaultMessage());
+            }
+        }
+        return errorMessages;
     }
 }
 

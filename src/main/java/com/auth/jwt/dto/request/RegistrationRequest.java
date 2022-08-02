@@ -1,15 +1,13 @@
 package com.auth.jwt.dto.request;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.auth.jwt.validator.registation.DataUserConstraint;
+import lombok.*;
 
 import java.util.List;
 
 @NoArgsConstructor @AllArgsConstructor
-@Setter @Getter
+@Setter @Getter @DataUserConstraint
 public class RegistrationRequest {
 
     private String fullName;

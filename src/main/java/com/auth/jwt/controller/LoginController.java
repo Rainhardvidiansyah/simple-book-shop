@@ -1,6 +1,7 @@
 package com.auth.jwt.controller;
 
 
+import com.auth.jwt.dto.exception.LoginException;
 import com.auth.jwt.dto.request.LoginRequestDto;
 import com.auth.jwt.dto.response.LoginResponseDto;
 import com.auth.jwt.security.jwt.JwtUtils;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,6 +37,14 @@ public class LoginController {
 
     @PostMapping("/authenticate")
     public ResponseEntity<?> loginFunc(@RequestBody LoginRequestDto loginRequest){
+        try {
+            if(loginRequest.getEmail().isEmpty() && loginRequest.getEmail().isBlank()){
+                throw new LoginException("Please input your email");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
         );
