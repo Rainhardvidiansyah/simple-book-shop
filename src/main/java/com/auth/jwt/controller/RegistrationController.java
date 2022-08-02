@@ -1,6 +1,7 @@
 package com.auth.jwt.controller;
 
 import com.auth.jwt.dto.request.RegistrationRequest;
+import com.auth.jwt.dto.response.RegistrationResponseDto;
 import com.auth.jwt.service.RegistrationService;
 import com.auth.jwt.user.AppUser;
 import lombok.RequiredArgsConstructor;
@@ -20,16 +21,20 @@ public class RegistrationController {
 
     private final RegistrationService registrationService;
 
-
     @PostMapping("/registration")
     public ResponseEntity<?> registration(@RequestBody RegistrationRequest request){
+        boolean userExisting = registrationService.checkUserExisting(request.getEmail());
+        if(userExisting){
+            return new ResponseEntity<>(String.format("%s has been registered", request.getEmail()),
+                    HttpStatus.BAD_REQUEST);
+        }
         AppUser user = new AppUser();
         user.setFullName(request.getFullName());
         user.setEmail(request.getEmail());
         user.setPassword(request.getPassword());
         AppUser savedUser = registrationService.registrationUser(user);
         log.info("User just registered {}", user);
-        return new ResponseEntity<>(savedUser, HttpStatus.OK);
+        return new ResponseEntity<>(RegistrationResponseDto.registrationResponse(user), HttpStatus.OK);
     }
 }
 

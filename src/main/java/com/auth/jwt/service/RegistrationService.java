@@ -7,6 +7,7 @@ import com.auth.jwt.user.AppUser;
 import com.auth.jwt.user.ERole;
 import com.auth.jwt.user.Role;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ public class RegistrationService {
     private final RoleRepo roleRepo;
     private final PasswordEncoder passwordEncoder;
 
+    @Autowired
     public RegistrationService(UserRepo userRepo, RoleRepo roleRepo, PasswordEncoder passwordEncoder) {
         this.userRepo = userRepo;
         this.roleRepo = roleRepo;
@@ -46,9 +48,12 @@ public class RegistrationService {
             catManager.add(roleManager);
             user.setRoles(catManager);
         }
-
         return userRepo.save(user);
+    }
 
+    public boolean checkUserExisting(String email){
+        boolean userPresentInDb = userRepo.findByEmail(email).isPresent();
+        return userPresentInDb;
     }
 
 
