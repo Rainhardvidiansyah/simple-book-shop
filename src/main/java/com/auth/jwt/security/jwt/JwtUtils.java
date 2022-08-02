@@ -13,9 +13,10 @@ import java.util.Date;
 @Slf4j
 public class JwtUtils {
 
-//    @Value("$()")
-//    private String secret;
-//
+    @Value("$(app.jwt.secret)")
+    private String secret;
+
+
 //    @Value("$()")
 //    private int expiration;
 
@@ -26,7 +27,7 @@ public class JwtUtils {
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + 172800000))
-                .signWith(SignatureAlgorithm.ES512, "secret")
+                .signWith(SignatureAlgorithm.HS512, secret)
                 .compact();
         return jwt;
 
