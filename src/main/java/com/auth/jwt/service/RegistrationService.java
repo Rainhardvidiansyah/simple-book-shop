@@ -1,6 +1,5 @@
 package com.auth.jwt.service;
 
-import com.auth.jwt.dto.request.RegistrationRequest;
 import com.auth.jwt.repository.RoleRepo;
 import com.auth.jwt.repository.UserRepo;
 import com.auth.jwt.user.AppUser;
@@ -8,7 +7,6 @@ import com.auth.jwt.user.ERole;
 import com.auth.jwt.user.Role;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +34,7 @@ public class RegistrationService {
         user.setPassword(encodedPassword);
         List<Role> roleUser = new ArrayList<>();
         if(user.getRoles().isEmpty()){
-            Role roleAdmin = roleRepo.findRoleByRoleName(ERole.ADMIN).orElseThrow();
+            Role roleAdmin = roleRepo.findRoleByRoleName(ERole.ROLE_ADMIN).orElseThrow();
             //Role roleId = roleRepo.findById(1L).orElseThrow(); this works too, but tricky
             roleUser.add(roleAdmin);
             user.setRoles(roleUser);
@@ -44,7 +42,7 @@ public class RegistrationService {
 
         List<Role> catManager = new ArrayList<>();
         if(user.getFullName().equalsIgnoreCase("hoki")){
-            Role roleManager = roleRepo.findRoleByRoleName(ERole.MANAGER).orElseThrow();
+            Role roleManager = roleRepo.findRoleByRoleName(ERole.ROLE_MANAGER).orElseThrow();
             catManager.add(roleManager);
             user.setRoles(catManager);
         }

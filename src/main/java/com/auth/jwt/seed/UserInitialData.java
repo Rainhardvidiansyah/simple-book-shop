@@ -33,9 +33,9 @@ public class UserInitialData implements ApplicationListener<ContextRefreshedEven
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        Role adminRole = new Role(ERole.ADMIN);
-        Role userRole = new Role(ERole.USER);
-        Role managerRole = new Role(ERole.MANAGER);
+        Role adminRole = new Role(ERole.ROLE_ADMIN);
+        Role userRole = new Role(ERole.ROLE_USER);
+        Role managerRole = new Role(ERole.ROLE_MANAGER);
         roleRepo.saveAll(List.of(adminRole, userRole, managerRole));
 
 
