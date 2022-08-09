@@ -29,9 +29,10 @@ public class RegistrationController {
 
     @PostMapping("/registration")
     public ResponseEntity<?> registration(@Valid @RequestBody RegistrationRequest request, Errors errors){
-        m(errors);
+        errorMessages(errors);
         boolean userExisting = registrationService.checkUserExisting(request.getEmail());
         if(userExisting){
+            errorMessages(errors);
             return new ResponseEntity<>(String.format("%s has been registered", request.getEmail()),
                     HttpStatus.BAD_REQUEST);
         }
@@ -45,7 +46,7 @@ public class RegistrationController {
     }
 
 
-    private static List<String> m(Errors errors){
+    private static List<String> errorMessages(Errors errors){
         List<String> errorMessages = new ArrayList<>();
         if(errors.hasErrors()){
             for(ObjectError objectError : errors.getAllErrors()){
