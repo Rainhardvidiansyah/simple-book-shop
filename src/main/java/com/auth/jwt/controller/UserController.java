@@ -1,17 +1,8 @@
 package com.auth.jwt.controller;
 
-import com.auth.jwt.service.AppuserService;
-import com.auth.jwt.user.AppUser;
-import com.auth.jwt.user.Role;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor

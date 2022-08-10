@@ -1,9 +1,7 @@
 package com.auth.jwt.dto.response;
 
-import com.auth.jwt.user.AppUser;
-import lombok.AllArgsConstructor;
+import com.auth.jwt.repository.user.AppUser;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter @Setter

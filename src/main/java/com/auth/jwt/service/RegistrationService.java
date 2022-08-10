@@ -2,9 +2,9 @@ package com.auth.jwt.service;
 
 import com.auth.jwt.repository.RoleRepo;
 import com.auth.jwt.repository.UserRepo;
-import com.auth.jwt.user.AppUser;
-import com.auth.jwt.user.ERole;
-import com.auth.jwt.user.Role;
+import com.auth.jwt.repository.user.AppUser;
+import com.auth.jwt.repository.user.ERole;
+import com.auth.jwt.repository.user.Role;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;

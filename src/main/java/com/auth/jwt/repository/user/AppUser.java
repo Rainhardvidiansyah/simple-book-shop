@@ -1,4 +1,4 @@
-package com.auth.jwt.user;
+package com.auth.jwt.repository.user;
 
 import com.auth.jwt.dto.request.RegistrationRequest;
 import lombok.*;

@@ -1,4 +1,4 @@
-package com.auth.jwt.user;
+package com.auth.jwt.repository.user;
 
 public enum ERole {
     ROLE_ADMIN,

@@ -5,7 +5,7 @@ import com.auth.jwt.dto.exception.LoginException;
 import com.auth.jwt.dto.request.LoginRequestDto;
 import com.auth.jwt.dto.response.LoginResponseDto;
 import com.auth.jwt.security.jwt.JwtUtils;
-import com.auth.jwt.user.UserDetailsImpl;
+import com.auth.jwt.repository.user.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
