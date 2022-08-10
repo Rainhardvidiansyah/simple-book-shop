@@ -27,10 +27,11 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+        final String header = request.getHeader("Authorization");
         try {
-            String jwt = parseJwt(request);
-            if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
-                String email = jwtUtils.getUserNameFromJwtToken(jwt);
+            String token = parseJwt(request);
+            if (token != null && jwtUtils.validateJwtToken(token)) {
+                String email = jwtUtils.getEmailFromJwtToken(token);
                 UserDetails userDetails = userDetailsService.loadUserByUsername(email);
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
@@ -39,10 +40,21 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
         } catch (Exception e) {
-            logger.error("Cannot set user authentication: {}", e);
+            logger.error("Authentication failed: {}", e);
         }
         filterChain.doFilter(request, response);
     }
+
+    /**
+     String jwt = parseJwt(request);
+     if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
+     String username = jwtUtils.getUserNameFromJwtToken(jwt);
+     UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+     userDetails, null, userDetails.getAuthorities());
+     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+     SecurityContextHolder.getContext().setAuthentication(authentication);
+     */
 
     private String parseJwt(HttpServletRequest request) {
         String headerAuth = request.getHeader("Authorization");

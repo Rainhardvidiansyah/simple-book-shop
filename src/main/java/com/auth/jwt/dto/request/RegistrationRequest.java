@@ -4,6 +4,7 @@ package com.auth.jwt.dto.request;
 import com.auth.jwt.validator.registation.DataUserConstraint;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor @AllArgsConstructor
@@ -14,5 +15,5 @@ public class RegistrationRequest {
     public String email;
     private String password;
     //private String matchPassword;
-    private List<String> authority;
+    private List<String> authority = new ArrayList<>();
 }

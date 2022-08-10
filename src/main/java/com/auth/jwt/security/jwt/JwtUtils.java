@@ -34,9 +34,9 @@ public class JwtUtils {
     }
 
 
-    public boolean validateJwtToken(String jwtAuthToken) {
+    public boolean validateJwtToken(String token) {
         try {
-            Jwts.parser().setSigningKey("secret").parseClaimsJws(jwtAuthToken);
+            Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
             return true;
         } catch (SignatureException e) {
             log.error("Invalid JWT signature: {}", e.getMessage());
@@ -52,7 +52,7 @@ public class JwtUtils {
         return false;
     }
 
-    public String getUserNameFromJwtToken(String jwt) {
-        return Jwts.parser().setSigningKey("secret").parseClaimsJwt(jwt).getBody().getSubject();
+    public String getEmailFromJwtToken(String jwt) {
+        return Jwts.parser().setSigningKey(secret).parseClaimsJws(jwt).getBody().getSubject();
     }
 }

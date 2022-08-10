@@ -49,7 +49,7 @@ public class UserInitialData implements ApplicationListener<ContextRefreshedEven
         user.setRoles(rainhardRoles);
 
         AppUser savedUser = userRepo.save(user);
-//        log.info("Saved user: {}", savedUser);
+        log.info("Saved user: {}", savedUser);
 //        log.info("User data: {}", user);
     }
 }

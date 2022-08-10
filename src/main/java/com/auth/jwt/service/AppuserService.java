@@ -38,13 +38,10 @@ public class AppuserService {
 //    }
 
     public AppUser getUserName(String email){
-        return userRepo.findByEmail(email)
+        return userRepo.findAppUserByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found!"));
     }
 
-    public AppUser fetchUserFullName(String fullName){
-        return userRepo.findByFullName(fullName);
-    }
 
     public List<AppUser> getAllUser(){
         return userRepo.findAll();

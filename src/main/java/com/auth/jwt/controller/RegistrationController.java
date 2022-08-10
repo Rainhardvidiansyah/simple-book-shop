@@ -28,11 +28,9 @@ public class RegistrationController {
     private final RegistrationService registrationService;
 
     @PostMapping("/registration")
-    public ResponseEntity<?> registration(@Valid @RequestBody RegistrationRequest request, Errors errors){
-        errorMessages(errors);
+    public ResponseEntity<?> registration(@RequestBody RegistrationRequest request){
         boolean userExisting = registrationService.checkUserExisting(request.getEmail());
         if(userExisting){
-            errorMessages(errors);
             return new ResponseEntity<>(String.format("%s has been registered", request.getEmail()),
                     HttpStatus.BAD_REQUEST);
         }

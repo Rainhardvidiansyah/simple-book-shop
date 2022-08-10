@@ -34,9 +34,10 @@ public class RegistrationService {
         user.setPassword(encodedPassword);
         List<Role> roleUser = new ArrayList<>();
         if(user.getRoles().isEmpty()){
-            Role roleAdmin = roleRepo.findRoleByRoleName(ERole.ROLE_ADMIN).orElseThrow();
+            //Role roleAdmin = roleRepo.findRoleByRoleName(ERole.ROLE_ADMIN).orElseThrow();
             //Role roleId = roleRepo.findById(1L).orElseThrow(); this works too, but tricky
-            roleUser.add(roleAdmin);
+            Role roleForUser = roleRepo.findRoleByRoleName(ERole.ROLE_USER).orElseThrow();
+            roleUser.add(roleForUser);
             user.setRoles(roleUser);
         }
 
@@ -50,7 +51,7 @@ public class RegistrationService {
     }
 
     public boolean checkUserExisting(String email){
-        boolean userPresentInDb = userRepo.findByEmail(email).isPresent();
+        boolean userPresentInDb = userRepo.findAppUserByEmail(email).isPresent();
         return userPresentInDb;
     }
 
