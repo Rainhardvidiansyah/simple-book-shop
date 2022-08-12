@@ -1,6 +1,5 @@
 package com.auth.jwt.service;
 
-import com.auth.jwt.model.Author;
 import com.auth.jwt.model.Book;
 import com.auth.jwt.repository.BooksRepo;
 import org.junit.jupiter.api.Test;

@@ -1,7 +1,6 @@
 package com.auth.jwt.dto;
 
 
-import com.auth.jwt.model.Author;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
