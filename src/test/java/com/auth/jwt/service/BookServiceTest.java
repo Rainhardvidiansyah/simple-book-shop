@@ -25,20 +25,7 @@ class BookServiceTest {
 
     @Test
     void saveBooks(){
-        Author author = new Author();
-        author.setId(1l);
-        author.setAuthorName("Rainhard");
-       Book book = Book.builder()
-               .id(1l)
-               .title("Title 1")
-               //.author(author)
-               .synopsis("Synopsis")
-               .price("10000")
-               .isbn("ISBN")
-               .dateOfPublished(new Date().toString())
-               .build();
-        //Mockito.when(booksService.saveBooks(books, author.getName())).thenReturn(books);
-        assertThat(book).isNotNull();
+
     }
 
 

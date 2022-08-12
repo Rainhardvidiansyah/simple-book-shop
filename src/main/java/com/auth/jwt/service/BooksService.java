@@ -50,6 +50,5 @@ public class BooksService {
 
     public List<Book> findBooksByAuthorName(String authorName){
         return booksRepo.findByAuthorOrderByTitleAsc(authorName);
-        //return booksRepo.findAuthor(authorName);
     }
 }
