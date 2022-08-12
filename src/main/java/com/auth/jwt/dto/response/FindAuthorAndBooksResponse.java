@@ -33,7 +33,7 @@ public class FindAuthorAndBooksResponse {
         this.dateOfPublished = dateOfPublished;
     }
 
-    public FindAuthorAndBooksResponse From(Book book){
+    public static FindAuthorAndBooksResponse From(Book book){
 //        new FindAuthorAndBooksResponse(
 //                books.getTitle(), books.getAuthor(), books.getSynopsis(), books.getPages(),
 //                books.getPrice(), books.getPaperType(), books.getStocks(),

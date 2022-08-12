@@ -1,5 +1,6 @@
 package com.auth.jwt.service;
 
+import com.auth.jwt.dto.BooksDto;
 import com.auth.jwt.model.Book;
 import com.auth.jwt.repository.BooksRepo;
 import lombok.RequiredArgsConstructor;
@@ -37,10 +38,11 @@ public class BooksService {
 
     public Book saveBooks(Book book){
         book.setPrice(convertPrice(book.getPrice()));
+        book.setDateOfUpload(setDate());
         return booksRepo.save(book);
     }
 
-    public Optional<Book> findBooksTitle(String title){
+    public Optional<Book> findBookTitle(String title){
         return booksRepo.findBooksByTitle(title);
     }
 
@@ -50,5 +52,30 @@ public class BooksService {
 
     public List<Book> findBooksByAuthorName(String authorName){
         return booksRepo.findByAuthorOrderByTitleAsc(authorName);
+    }
+
+    public Optional<Book> findBookId(Long id){
+        return booksRepo.findById(id);
+    }
+
+    public Book updateBook(Long id, Book book){
+        Book updateBook = booksRepo.findById(id)
+                        .orElseThrow(() -> new RuntimeException(String.format("Book with %d not found", id)));
+        updateBook.setTitle(book.getTitle());
+        updateBook.setAuthor(book.getAuthor());
+        updateBook.setSynopsis(book.getSynopsis());
+        updateBook.setPages(book.getPages());
+        updateBook.setPrice(book.getPrice());
+        updateBook.setPaperType(book.getPaperType());
+        updateBook.setStocks(book.getStocks());
+        updateBook.setIsbn(book.getIsbn());
+        updateBook.setDateOfPublished(book.getDateOfPublished());
+        updateBook.setDateOfUpload(book.getDateOfUpload());
+        updateBook.setDateOfUpload(setDate());
+        return booksRepo.save(updateBook);
+    }
+
+    public void deleteBook(Long id){
+        booksRepo.deleteById(id);
     }
 }
