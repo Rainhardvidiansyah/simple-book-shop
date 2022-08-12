@@ -1,13 +1,18 @@
 package com.auth.jwt.repository;
 
-import com.auth.jwt.model.Books;
+import com.auth.jwt.model.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface BooksRepo extends JpaRepository<Books, Long> {
+public interface BooksRepo extends JpaRepository<Book, Long> {
 
-    Optional <Books> findBooksByTitle(String title);
+    Optional <Book> findBooksByTitle(String title);
+    List<Book> findByAuthorOrderByTitleAsc(String author);
+
+
+
 }

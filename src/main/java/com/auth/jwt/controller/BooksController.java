@@ -2,7 +2,9 @@ package com.auth.jwt.controller;
 
 import com.auth.jwt.activities.BookUploader;
 import com.auth.jwt.dto.BooksDto;
-import com.auth.jwt.model.Books;
+import com.auth.jwt.dto.request.FindAuthorAndBooksRequest;
+import com.auth.jwt.dto.response.FindAuthorAndBooksResponse;
+import com.auth.jwt.model.Book;
 import com.auth.jwt.repository.BookUploaderRepo;
 import com.auth.jwt.service.BooksService;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -37,9 +39,10 @@ public class BooksController {
         }
         var sameTitle = booksService.findBooksTitle(booksDto.getTitle());
         if(sameTitle.isPresent()){
-            return new ResponseEntity<>("This is not allowed", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Book is present!!", HttpStatus.BAD_REQUEST);
         }
-        Books savedBooks = booksService.saveBooks(Books.saveFromDto(booksDto));
+        Book savedBook = booksService.saveBooks(Book.saveFromDto(booksDto));
+        log.info("{}", savedBook);
         var uploader = new BookUploader();
         uploader.setEmail(authentication.getName());
         List<String> roles = new ArrayList<>();
@@ -47,7 +50,7 @@ public class BooksController {
         uploader.setRoles(roles);
         BookUploader savedUploader = uploaderRepo.save(uploader);
         log.info("Upload data: {}", uploader);
-        return new ResponseEntity<>(savedBooks, HttpStatus.OK);
+        return new ResponseEntity<>(savedBook, HttpStatus.OK);
     }
 
     @GetMapping("/test-string")
@@ -72,6 +75,37 @@ public class BooksController {
         return //(UserPrincipal)authentication.getPrincipal();
                 String.format("Hello Mr/Mrs %s", authentication.getName());
     }
+
+    @GetMapping("/get-all")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> findAllBooks(){
+        List<Book> books = booksService.findAllBooks();
+        return new ResponseEntity<>(books, HttpStatus.OK);
+    }
+
+    @PostMapping("/search")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> findTitleByAuthor(@RequestBody FindAuthorAndBooksRequest request){
+        List<Book> findTitles = booksService.findBooksByAuthorName(request.getAuthorName());
+        List<FindAuthorAndBooksResponse> responseList = new ArrayList<>();
+        for(Book book : findTitles){
+            var response = new FindAuthorAndBooksResponse();
+            response.setBookTitle(book.getTitle());
+            response.setAuthor(book.getAuthor());
+            response.setSynopsis(book.getSynopsis());
+            response.setPages(book.getPages());
+            response.setPrice(book.getPrice());
+            response.setPaperType(book.getPaperType());
+            response.setStocks(book.getStocks());
+            response.setIsbn(book.getIsbn());
+            responseList.add(response);
+        }
+        if(findTitles.isEmpty()){
+            return new ResponseEntity<>("Books not found", HttpStatus.OK);
+        }
+        return new ResponseEntity<>(responseList, HttpStatus.OK);
+    }
+
 
 
 }

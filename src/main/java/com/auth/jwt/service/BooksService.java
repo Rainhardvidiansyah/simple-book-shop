@@ -1,6 +1,6 @@
 package com.auth.jwt.service;
 
-import com.auth.jwt.model.Books;
+import com.auth.jwt.model.Book;
 import com.auth.jwt.repository.BooksRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -34,13 +35,21 @@ public class BooksService {
         return setDateFormat;
     }
 
-    public Books saveBooks(Books books){
-        books.setPrice(convertPrice(books.getPrice()));
-        books.setDateOfUpload(setDate());
-        return booksRepo.save(books);
+    public Book saveBooks(Book book){
+        book.setPrice(convertPrice(book.getPrice()));
+        return booksRepo.save(book);
     }
 
-    public Optional<Books> findBooksTitle(String title){
+    public Optional<Book> findBooksTitle(String title){
         return booksRepo.findBooksByTitle(title);
+    }
+
+    public List<Book> findAllBooks(){
+        return booksRepo.findAll();
+    }
+
+    public List<Book> findBooksByAuthorName(String authorName){
+        return booksRepo.findByAuthorOrderByTitleAsc(authorName);
+        //return booksRepo.findAuthor(authorName);
     }
 }

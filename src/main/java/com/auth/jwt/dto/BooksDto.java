@@ -1,6 +1,7 @@
 package com.auth.jwt.dto;
 
 
+import com.auth.jwt.model.Author;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,7 @@ DTO CLASS FOR BOOKS CONTROLLER
 public class BooksDto {
 
     private String title;
+    private String authorName;
     private String synopsis;
     private int pages;
     private String price;
@@ -20,4 +22,5 @@ public class BooksDto {
     private String isbn;
     private String dateOfPublished;
     private String dateOfUpload;
+
 }
