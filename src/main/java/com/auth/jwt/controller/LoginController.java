@@ -5,7 +5,7 @@ import com.auth.jwt.dto.exception.LoginException;
 import com.auth.jwt.dto.request.LoginRequestDto;
 import com.auth.jwt.dto.response.LoginResponseDto;
 import com.auth.jwt.security.jwt.JwtUtils;
-import com.auth.jwt.repository.user.UserDetailsImpl;
+import com.auth.jwt.user.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

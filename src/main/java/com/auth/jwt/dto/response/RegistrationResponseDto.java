@@ -1,6 +1,6 @@
 package com.auth.jwt.dto.response;
 
-import com.auth.jwt.repository.user.AppUser;
+import com.auth.jwt.user.AppUser;
 import lombok.Getter;
 import lombok.Setter;
 

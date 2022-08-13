@@ -2,10 +2,7 @@ package com.auth.jwt.model;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @NoArgsConstructor @AllArgsConstructor
@@ -16,5 +13,10 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
+    private ECategory categoryName;
 
+    public Category(ECategory categoryName) {
+        this.categoryName = categoryName;
+    }
 }

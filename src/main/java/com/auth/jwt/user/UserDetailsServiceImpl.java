@@ -1,4 +1,4 @@
-package com.auth.jwt.repository.user;
+package com.auth.jwt.user;
 
 import com.auth.jwt.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;

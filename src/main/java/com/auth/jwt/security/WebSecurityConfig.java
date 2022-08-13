@@ -3,7 +3,7 @@ package com.auth.jwt.security;
 import com.auth.jwt.repository.UserRepo;
 import com.auth.jwt.security.jwt.AuthEntry;
 import com.auth.jwt.security.jwt.AuthTokenFilter;
-import com.auth.jwt.repository.user.UserDetailsServiceImpl;
+import com.auth.jwt.user.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

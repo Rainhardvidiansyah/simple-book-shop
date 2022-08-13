@@ -4,6 +4,8 @@ import com.auth.jwt.dto.BooksDto;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @AllArgsConstructor @NoArgsConstructor
@@ -14,9 +16,19 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
-
     private String author;
     private String synopsis;
+
+    @OneToMany(fetch = FetchType.LAZY,
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE
+            })
+    @JoinTable(name = "book_category",
+            joinColumns = { @JoinColumn(name = "book_id") },
+            inverseJoinColumns = { @JoinColumn(name = "category_id") })
+    private Set<Category> tags = new HashSet<>();
+
     private int pages;
     private String price;
     private String paperType;

@@ -1,4 +1,4 @@
-package com.auth.jwt.repository.user;
+package com.auth.jwt.user;
 
 import lombok.*;
 

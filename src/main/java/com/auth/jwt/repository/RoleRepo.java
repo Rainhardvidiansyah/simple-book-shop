@@ -1,7 +1,7 @@
 package com.auth.jwt.repository;
 
-import com.auth.jwt.repository.user.ERole;
-import com.auth.jwt.repository.user.Role;
+import com.auth.jwt.user.ERole;
+import com.auth.jwt.user.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
