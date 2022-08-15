@@ -6,6 +6,7 @@ import com.auth.jwt.dto.request.FindAuthorAndBooksRequest;
 import com.auth.jwt.dto.request.FindBooksTagRequestDto;
 import com.auth.jwt.dto.response.BookResponse;
 import com.auth.jwt.model.Book;
+import com.auth.jwt.model.Category;
 import com.auth.jwt.repository.BookUploaderRepo;
 import com.auth.jwt.service.BooksService;
 import lombok.RequiredArgsConstructor;
@@ -17,10 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @RestController
@@ -91,12 +89,12 @@ public class BooksController {
     @PostMapping("/search")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER') or hasRole('ROLE_USER')")
     public ResponseEntity<?> findTitleByAuthor(@RequestBody FindAuthorAndBooksRequest request){
-        List<Book> findTitles = booksService.findBooksByAuthorName(request.getAuthorName());
-        if(findTitles.isEmpty()){
+        var bookList = booksService.findBooksByAuthorName(request.getAuthorName());
+        if(bookList.isEmpty()){
             return new ResponseEntity<>("Books not found", HttpStatus.OK);
         }
         List<BookResponse> responses = new ArrayList<>();
-        for(Book book: findTitles){
+        for(Book book: bookList){
             responses.add(BookResponse.From(book));
         }
         return new ResponseEntity<>(responses, HttpStatus.OK);
@@ -156,10 +154,30 @@ public class BooksController {
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 
+    @GetMapping("/amount")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> getBookAmount() {
+        var bookList = booksService.findAllBooks();
+        int sizeAMount = bookList.size();
+        List<BookResponse> responses = new ArrayList<>();
+        for(Book book: bookList){
+            responses.add(BookResponse.From(book));
+        }
+//        return new ResponseEntity<>(responses, HttpStatus.OK);
+            return new ResponseEntity<>(sizeAMount, HttpStatus.OK);
+    }
 
 
 
+        //STILL NOT USED.
+//    private List<BookResponse> responses(List<Book> bookLists){
+//        bookLists = booksService.findAllBooks();
+//        List<BookResponse> responses = new ArrayList<>();
+//        for(Book book: bookLists){
+//            responses.add(BookResponse.From(book));
+//        }
+//        return responses;
+//    }
 
 
-
-}
+    }

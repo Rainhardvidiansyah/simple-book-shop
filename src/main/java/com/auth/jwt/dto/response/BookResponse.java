@@ -5,9 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Optional;
 
-@NoArgsConstructor @Getter @Setter
+@NoArgsConstructor
+@Getter @Setter
 public class BookResponse {
 
     private String bookTitle;

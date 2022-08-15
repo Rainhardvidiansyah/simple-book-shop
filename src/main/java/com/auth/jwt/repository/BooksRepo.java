@@ -14,7 +14,9 @@ public interface BooksRepo extends JpaRepository<Book, Long> {
 
     Optional <Book> findBooksByTitle(String title);
     List<Book> findByAuthorOrderByTitleAsc(String author);
-//    List<Book> findByTagsOrderByTitleAsc(String tags);
+
+    @Query("Select b from Book b where b.title like %:title%")
+    List<Book> findTitleLike(@Param("title") String title);
 
     @Query("Select b from Book b where b.tags like %:tags%")
     List<Book> findTagsLike(@Param("tags") String tags);
