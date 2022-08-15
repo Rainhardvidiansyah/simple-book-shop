@@ -19,7 +19,9 @@ public class Book {
     private String author;
     private String synopsis;
 
-    @OneToMany(fetch = FetchType.LAZY,
+    private String tags;
+
+    @OneToMany(fetch = FetchType.EAGER,
             cascade = {
                     CascadeType.PERSIST,
                     CascadeType.MERGE
@@ -27,7 +29,7 @@ public class Book {
     @JoinTable(name = "book_category",
             joinColumns = { @JoinColumn(name = "book_id") },
             inverseJoinColumns = { @JoinColumn(name = "category_id") })
-    private Set<Category> tags = new HashSet<>();
+    private Set<Category> categories = new HashSet<>();
 
     private int pages;
     private String price;
@@ -37,12 +39,15 @@ public class Book {
     private String dateOfPublished;
     private String dateOfUpload;
 
-    public Book(String title, String author, String synopsis, int pages,
-                String price, String paperType, int stocks, String isbn,
-                String dateOfPublished, String dateOfUpload){
+
+    public Book(String title, String author, String synopsis, String tags,Set<Category> categories,
+                int pages, String price, String paperType, int stocks, String isbn,
+                String dateOfPublished, String dateOfUpload) {
         this.title = title;
         this.author = author;
         this.synopsis = synopsis;
+        this.tags = tags;
+        this.categories = categories;
         this.pages = pages;
         this.price = price;
         this.paperType = paperType;
@@ -50,12 +55,12 @@ public class Book {
         this.isbn = isbn;
         this.dateOfPublished = dateOfPublished;
         this.dateOfUpload = dateOfUpload;
-}
-
+    }
 
     public static Book saveFromDto(BooksDto booksDto){
         return new Book(booksDto.getTitle(), booksDto.getAuthorName(),
-                booksDto.getSynopsis(), booksDto.getPages(), booksDto.getPrice(),
+                booksDto.getSynopsis(), booksDto.getTags(),
+                booksDto.getCategories(), booksDto.getPages(), booksDto.getPrice(),
                 booksDto.getPaperType(), booksDto.getStocks(), booksDto.getIsbn(),
                 booksDto.getDateOfPublished(), booksDto.getDateOfUpload());
     }

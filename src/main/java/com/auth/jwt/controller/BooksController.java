@@ -3,6 +3,7 @@ package com.auth.jwt.controller;
 import com.auth.jwt.activities.BookUploader;
 import com.auth.jwt.dto.BooksDto;
 import com.auth.jwt.dto.request.FindAuthorAndBooksRequest;
+import com.auth.jwt.dto.request.FindBooksTagRequestDto;
 import com.auth.jwt.dto.response.BookResponse;
 import com.auth.jwt.model.Book;
 import com.auth.jwt.repository.BookUploaderRepo;
@@ -139,6 +140,20 @@ public class BooksController {
         Map<String, Boolean> response = new HashMap<>();
         response.put("Deleted", Boolean.TRUE);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/search/tags")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> findTagsBook(@RequestBody FindBooksTagRequestDto requestDto){
+        var bookList = booksService.findBooksByTags(requestDto.getTags());
+        if(bookList.isEmpty()){
+            return new ResponseEntity<>("Not found any tags", HttpStatus.OK);
+        }
+        List <BookResponse> responses = new ArrayList<>();
+        for(Book book: bookList){
+            responses.add(BookResponse.From(book));
+        }
+        return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 
 

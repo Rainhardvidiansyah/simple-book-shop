@@ -16,17 +16,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @ExtendWith(MockitoExtension.class)
 class BookServiceTest {
 
-    @Mock
-    private BooksRepo booksRepo;
-    @Autowired @InjectMocks
-    private BooksService booksService = new BooksService(booksRepo);
 
-    private Book book;
-
-    @Test
-    void saveBooks(){
-
-    }
 
 
 }

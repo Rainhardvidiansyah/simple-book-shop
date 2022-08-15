@@ -2,15 +2,17 @@ package com.auth.jwt.service;
 
 import com.auth.jwt.dto.BooksDto;
 import com.auth.jwt.model.Book;
+import com.auth.jwt.model.Category;
+import com.auth.jwt.model.ECategory;
 import com.auth.jwt.repository.BooksRepo;
+import com.auth.jwt.repository.CategoryRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.xml.catalog.Catalog;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +20,7 @@ public class BooksService {
 
 
     private final BooksRepo booksRepo;
+    private final CategoryRepo categoryRepo;
 
     private BigDecimal setPrice(String price){
         BigDecimal validAmount = new BigDecimal(price);
@@ -37,6 +40,12 @@ public class BooksService {
     }
 
     public Book saveBooks(Book book){
+//        Set<Category> categories = new HashSet<>();
+//        if(book.getCategories().equals("filsafat")){
+//            Category philosophyBook = categoryRepo.findCategoryByCategoryName(ECategory.PHILOSOPHY).orElseThrow();
+//            categories.add(philosophyBook);
+//        }
+//        book.setCategories(categories);
         book.setPrice(convertPrice(book.getPrice()));
         book.setDateOfUpload(setDate());
         return booksRepo.save(book);
@@ -44,6 +53,10 @@ public class BooksService {
 
     public Optional<Book> findBookTitle(String title){
         return booksRepo.findBooksByTitle(title);
+    }
+
+    public List<Book> findBooksByTags(String tags){
+        return booksRepo.findTagsLike(tags);
     }
 
     public List<Book> findAllBooks(){
