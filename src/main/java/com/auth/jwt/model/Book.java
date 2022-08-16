@@ -1,11 +1,12 @@
 package com.auth.jwt.model;
 
 import com.auth.jwt.dto.BooksDto;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
+import org.hibernate.type.AnyType;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @AllArgsConstructor @NoArgsConstructor
@@ -18,10 +19,9 @@ public class Book {
     private String title;
     private String author;
     private String synopsis;
-
     private String tags;
 
-    @OneToMany(fetch = FetchType.EAGER,
+    @ManyToMany(fetch = FetchType.EAGER,
             cascade = {
                     CascadeType.PERSIST,
                     CascadeType.MERGE
@@ -31,6 +31,12 @@ public class Book {
             inverseJoinColumns = { @JoinColumn(name = "category_id") })
     private Set<Category> categories = new HashSet<>();
 
+    @JsonBackReference
+    @OneToMany(mappedBy = "book")
+    private List<BookImage> bookImage = new ArrayList<>();
+
+    @Transient
+    private byte[] image;
     private int pages;
     private String price;
     private String paperType;
@@ -38,7 +44,6 @@ public class Book {
     private String isbn;
     private String dateOfPublished;
     private String dateOfUpload;
-
 
     public Book(String title, String author, String synopsis, String tags,Set<Category> categories,
                 int pages, String price, String paperType, int stocks, String isbn,
@@ -64,4 +69,6 @@ public class Book {
                 booksDto.getPaperType(), booksDto.getStocks(), booksDto.getIsbn(),
                 booksDto.getDateOfPublished(), booksDto.getDateOfUpload());
     }
+
+
 }

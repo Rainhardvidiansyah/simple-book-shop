@@ -34,7 +34,7 @@ public class BooksController {
     @PostMapping("/save-data")
     public ResponseEntity<?> saveBookData(@RequestBody BooksDto booksDto){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(booksDto.getTitle().isEmpty()){
+        if(booksDto.getTitle().isEmpty() && booksDto.getTitle().isBlank()){
             return new ResponseEntity<>("Title must be written!", HttpStatus.BAD_REQUEST);
         }
         var sameTitle = booksService.findBookTitle(booksDto.getTitle());
@@ -79,11 +79,11 @@ public class BooksController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> findAllBooks(){
         var bookList = booksService.findAllBooks();
-        List<BookResponse> responses = new ArrayList<>();
-        for(Book book: bookList){
-            responses.add(BookResponse.From(book));
-        }
-        return new ResponseEntity<>(responses, HttpStatus.OK);
+//        List<BookResponse> responses = new ArrayList<>();
+//        for(Book book: bookList){
+//            responses.add(BookResponse.From(book));
+//        }
+        return new ResponseEntity<>(responses(bookList), HttpStatus.OK);
     }
 
     @PostMapping("/search")
@@ -97,7 +97,7 @@ public class BooksController {
         for(Book book: bookList){
             responses.add(BookResponse.From(book));
         }
-        return new ResponseEntity<>(responses, HttpStatus.OK);
+        return new ResponseEntity<>(responses(bookList), HttpStatus.OK);
     }
 
     @GetMapping()
@@ -144,11 +144,8 @@ public class BooksController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> findTagsBook(@RequestBody FindBooksTagRequestDto requestDto){
         var bookList = booksService.findBooksByTags(requestDto.getTags());
-        if(bookList.isEmpty()){
-            return new ResponseEntity<>("Not found any tags", HttpStatus.OK);
-        }
-        List <BookResponse> responses = new ArrayList<>();
-        for(Book book: bookList){
+        List<BookResponse> responses = new ArrayList<>();
+        for(Book book:bookList){
             responses.add(BookResponse.From(book));
         }
         return new ResponseEntity<>(responses, HttpStatus.OK);
@@ -163,21 +160,19 @@ public class BooksController {
         for(Book book: bookList){
             responses.add(BookResponse.From(book));
         }
-//        return new ResponseEntity<>(responses, HttpStatus.OK);
             return new ResponseEntity<>(sizeAMount, HttpStatus.OK);
     }
 
 
 
         //STILL NOT USED.
-//    private List<BookResponse> responses(List<Book> bookLists){
-//        bookLists = booksService.findAllBooks();
-//        List<BookResponse> responses = new ArrayList<>();
-//        for(Book book: bookLists){
-//            responses.add(BookResponse.From(book));
-//        }
-//        return responses;
-//    }
-
-
+    private List<BookResponse> responses(List<Book> bookLists){
+        bookLists = booksService.findAllBooks();
+        List<BookResponse> responses = new ArrayList<>();
+        for(Book book: bookLists){
+            responses.add(BookResponse.From(book));
+        }
+        return responses;
     }
+
+}
