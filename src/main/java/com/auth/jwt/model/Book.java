@@ -2,6 +2,7 @@ package com.auth.jwt.model;
 
 import com.auth.jwt.dto.BooksDto;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import org.hibernate.type.AnyType;
 
@@ -31,12 +32,12 @@ public class Book {
             inverseJoinColumns = { @JoinColumn(name = "category_id") })
     private Set<Category> categories = new HashSet<>();
 
-    @JsonBackReference
-    @OneToMany(mappedBy = "book")
+
+    @JsonManagedReference
+    @OneToMany(targetEntity = BookImage.class, cascade = CascadeType.ALL)
+    @JoinColumn(name = "book_id")
     private List<BookImage> bookImage = new ArrayList<>();
 
-    @Transient
-    private byte[] image;
     private int pages;
     private String price;
     private String paperType;

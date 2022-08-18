@@ -1,6 +1,6 @@
 package com.auth.jwt.controller;
 
-import com.auth.jwt.model.BookImage;
+
 import com.auth.jwt.service.BookImageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +22,10 @@ public class BookImageController {
     @PostMapping("/upload/{book_id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> storeImage(@RequestParam("file") MultipartFile file, @PathVariable("book_id") Long bookId){
-        var saveImage = imageService.storeImage(file, bookId);
-        log.info("Data Image: {}", saveImage);
-        return new ResponseEntity<>(saveImage, HttpStatus.OK);
+//        var saveImage = imageService.storeImage(file, bookId);
+//        log.info("Data Image: {}", saveImage);
+//        return new ResponseEntity<>(saveImage, HttpStatus.OK);
+        return null;
     }
 
     @GetMapping("/get")

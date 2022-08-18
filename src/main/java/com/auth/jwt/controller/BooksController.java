@@ -6,7 +6,6 @@ import com.auth.jwt.dto.request.FindAuthorAndBooksRequest;
 import com.auth.jwt.dto.request.FindBooksTagRequestDto;
 import com.auth.jwt.dto.response.BookResponse;
 import com.auth.jwt.model.Book;
-import com.auth.jwt.model.Category;
 import com.auth.jwt.repository.BookUploaderRepo;
 import com.auth.jwt.service.BooksService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
@@ -79,10 +79,6 @@ public class BooksController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> findAllBooks(){
         var bookList = booksService.findAllBooks();
-//        List<BookResponse> responses = new ArrayList<>();
-//        for(Book book: bookList){
-//            responses.add(BookResponse.From(book));
-//        }
         return new ResponseEntity<>(responses(bookList), HttpStatus.OK);
     }
 
@@ -163,9 +159,6 @@ public class BooksController {
             return new ResponseEntity<>(sizeAMount, HttpStatus.OK);
     }
 
-
-
-        //STILL NOT USED.
     private List<BookResponse> responses(List<Book> bookLists){
         bookLists = booksService.findAllBooks();
         List<BookResponse> responses = new ArrayList<>();
@@ -173,6 +166,35 @@ public class BooksController {
             responses.add(BookResponse.From(book));
         }
         return responses;
+    }
+
+    @PostMapping("/add-image/{book_id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> storeImageForBook(@PathVariable("book_id") Long bookId,
+                                               @RequestParam("file") MultipartFile file){
+        var savedImagesInBook = booksService.insertImage(bookId, file);
+        if(file.isEmpty() && bookId == null){
+            return new ResponseEntity<>("Sorry data can't be processed", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(savedImagesInBook, HttpStatus.OK);
+    }
+
+    @PostMapping("/add-images/{book_id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?>  addImage(@PathVariable("book_id") Long bookId,
+                                      @RequestParam("file") MultipartFile[] file){
+        Map<String, Boolean> failedResponse = new HashMap<>();
+        failedResponse.put("Failed", Boolean.FALSE);
+        if(file == null && bookId == null){
+            return new ResponseEntity<>(failedResponse, HttpStatus.BAD_REQUEST);
+        }
+        booksService.addAnotherImage(bookId, file);
+
+        Map<String, Boolean> successfulResponse = new HashMap<>();
+        successfulResponse.put("Succeeded", Boolean.TRUE);
+
+        return new ResponseEntity<>(successfulResponse, HttpStatus.OK);
+
     }
 
 }

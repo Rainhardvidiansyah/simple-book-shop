@@ -1,18 +1,22 @@
 package com.auth.jwt.service;
 
-import com.auth.jwt.dto.BooksDto;
+
 import com.auth.jwt.model.Book;
-import com.auth.jwt.model.Category;
-import com.auth.jwt.model.ECategory;
+import com.auth.jwt.model.BookImage;
+
+import com.auth.jwt.repository.BookImageRepo;
 import com.auth.jwt.repository.BooksRepo;
 import com.auth.jwt.repository.CategoryRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.xml.catalog.Catalog;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +25,7 @@ public class BooksService {
 
     private final BooksRepo booksRepo;
     private final CategoryRepo categoryRepo;
+    private final BookImageRepo imageRepo;
 
     private BigDecimal setPrice(String price){
         BigDecimal validAmount = new BigDecimal(price);
@@ -40,12 +45,6 @@ public class BooksService {
     }
 
     public Book saveBooks(Book book){
-//        Set<Category> categories = new HashSet<>();
-//        if(book.getCategories().equals("filsafat")){
-//            Category philosophyBook = categoryRepo.findCategoryByCategoryName(ECategory.PHILOSOPHY).orElseThrow();
-//            categories.add(philosophyBook);
-//        }
-//        book.setCategories(categories);
         book.setPrice(convertPrice(book.getPrice()));
         book.setDateOfUpload(setDate());
         return booksRepo.save(book);
@@ -91,4 +90,49 @@ public class BooksService {
     public void deleteBook(Long id){
         booksRepo.deleteById(id);
     }
+
+    public Book insertImage(Long bookId, MultipartFile file) {
+        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+        var bookImage = new BookImage();
+        try {
+            if (fileName.contains("..")) {
+                throw new RuntimeException();
+            }
+            bookImage.setImageName(fileName);
+            bookImage.setImageData(file.getBytes());
+            bookImage.setContentType(file.getContentType());
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+        List<BookImage> imageList = new ArrayList<>();
+        imageList.add(bookImage);
+        var book = booksRepo.findById(bookId);
+        book.ifPresentOrElse(
+                storeData -> storeData.setBookImage(imageList),
+                () -> System.out.printf("%s not found", book));
+        BookImage savedImage = imageRepo.save(bookImage);
+        return book.get();
+    }
+
+    public void addAnotherImage(Long id, MultipartFile[] file) {
+        Optional<Book> book = booksRepo.findById(id);
+        if (book.isEmpty()) {
+            throw new RuntimeException("Not found any book");
+        }
+        var bookImage = new BookImage();
+        for (MultipartFile mFiles : file) {
+            try {
+                bookImage.setImageName(mFiles.getOriginalFilename());
+                bookImage.setImageData(mFiles.getBytes());
+                bookImage.setContentType(mFiles.getContentType());
+                bookImage.setBook(book.get());
+                var savedImages = imageRepo.save(bookImage);
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+        }
+        return;
+    }
+
+
 }

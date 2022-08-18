@@ -1,7 +1,7 @@
 package com.auth.jwt.model;
 
-import com.auth.jwt.dto.request.BookImageRequest;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -13,27 +13,22 @@ public class BookImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     private Long id;
 
-    /*
-        private String name;
-		private String type;
-		@Lob
-		private byte[] filecontent;
-     */
     private String imageName;
     @Lob
     private byte[] imageData;
-    private String description;
+    private String contentType;
 
-    @JsonManagedReference
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "book_id")
     private Book book;
 
-    public BookImage(byte[] imageData, String imageName, String description) {
+    public BookImage(byte[] imageData, String imageName, String contentType) {
         this.imageData = imageData;
         this.imageName = imageName;
-        this.description = description;
+        this.contentType = contentType;
     }
 }
