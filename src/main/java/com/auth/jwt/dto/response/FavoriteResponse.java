@@ -10,17 +10,14 @@ import lombok.Setter;
 @Getter @Setter
 public class FavoriteResponse {
 
-
     private String content;
 
-    private Long userId;
+    private String bookTitle;
 
     private String userName;
 
-    public static FavoriteResponse From(Favorite favorite){
-        return new FavoriteResponse(favorite.getContent(), favorite.getUser().getId(),
-                favorite.getUser().getFullName());
-    }
+
+
 
 
 }

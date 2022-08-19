@@ -21,12 +21,23 @@ public class Favorite {
     @JoinColumn(name = "user_id")
     private AppUser user;
 
+    @ManyToOne
+    @JoinColumn(name = "book_id")
+    private Book book;
+
     public Favorite(String content) {
         this.content = content;
     }
 
-    public static Favorite saveFrom(FavoriteRequestDto requestDto){
-        return new Favorite(requestDto.getContent());
-
+    public Favorite(AppUser user, Book book, String content) {
+        this.user = user;
+        this.book = book;
+        this.content = content;
     }
+
+    public static Favorite saveFrom(FavoriteRequestDto requestDto){
+        return new Favorite(requestDto.getContent()
+        );
+    }
+
 }
