@@ -114,19 +114,21 @@ public class BooksService {
         return book.get();
     }
 
-    public void addAnotherImage(Long id, MultipartFile[] file) {
+    public void addAnotherImage(Long id, MultipartFile[] files) {
         Optional<Book> book = booksRepo.findById(id);
         if (book.isEmpty()) {
             throw new RuntimeException("Not found any book");
         }
         var bookImage = new BookImage();
-        for (MultipartFile mFiles : file) {
+        List<BookImage> imageList = new ArrayList<>();
+        for (MultipartFile file : files) {
             try {
-                bookImage.setImageName(mFiles.getOriginalFilename());
-                bookImage.setImageData(mFiles.getBytes());
-                bookImage.setContentType(mFiles.getContentType());
+                bookImage.setImageName(file.getOriginalFilename());
+                bookImage.setImageData(file.getBytes());
+                bookImage.setContentType(file.getContentType());
                 bookImage.setBook(book.get());
-                var savedImages = imageRepo.save(bookImage);
+                imageList.add(bookImage);
+                imageRepo.saveAll(imageList);
             }catch(IOException e){
                 e.printStackTrace();
             }
