@@ -2,6 +2,8 @@ package com.auth.jwt.controller;
 
 import com.auth.jwt.dto.request.FavoriteRequestDto;
 import com.auth.jwt.dto.response.FavoriteResponse;
+import com.auth.jwt.dto.response.FavoriteResponseInJoin;
+import com.auth.jwt.model.Favorite;
 import com.auth.jwt.repository.BooksRepo;
 import com.auth.jwt.repository.UserRepo;
 import com.auth.jwt.service.FavoriteService;
@@ -14,9 +16,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/v1/favorite")
+@RequestMapping("/api/favorite")
 @RequiredArgsConstructor
 @Slf4j
 public class FavoriteController {
@@ -24,20 +30,38 @@ public class FavoriteController {
     private final FavoriteService favoriteService;
     private final UserRepo userRepo;
     private final BooksRepo booksRepo;
-    private final HttpServletRequest request;
+    private final HttpServletRequest servletRequest;
 
     @PostMapping("/add")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> makeFavorite(@RequestBody FavoriteRequestDto favoriteRequestDto){
-        String email = request.getUserPrincipal().getName();
+    public ResponseEntity<?> makeFavorite(@RequestBody FavoriteRequestDto favRequestDto){
+        var email = servletRequest.getUserPrincipal().getName();
         AppUser user = userRepo.findAppUserByEmail(email)
                 .orElseThrow(RuntimeException::new);
-        var savedFavorite =
-        favoriteService.createFavorite(favoriteRequestDto.getBookId(), user);
+        var savedFavorite = favoriteService.createFavorite(favRequestDto.getBookId(), user);
         log.info("Data saved: {}", savedFavorite);
         return new ResponseEntity<>(new FavoriteResponse(savedFavorite.getContent(), savedFavorite.getBook().getTitle(),
                 user.getFullName()), HttpStatus.OK);
     }
+
+    @GetMapping("/my")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> getUserInFavorite(){
+        var email = servletRequest.getUserPrincipal().getName();
+        var user = userRepo.findAppUserByEmail(email)
+                .orElseThrow(RuntimeException::new);
+        log.info(servletRequest.getHeader(user.getEmail()));
+
+        var favList = favoriteService.getUser(user);
+        List<FavoriteResponseInJoin> joinList = new ArrayList<>();
+        for(Favorite favorite: favList){
+            joinList.add(FavoriteResponseInJoin.From(favorite));
+        }
+        return new ResponseEntity<>(joinList, HttpStatus.OK);
+    }
+
+
+
 
 
 }

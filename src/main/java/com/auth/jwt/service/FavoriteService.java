@@ -1,7 +1,8 @@
 package com.auth.jwt.service;
 
 
-import com.auth.jwt.model.Book;
+
+import com.auth.jwt.dto.response.FavoriteResponseInJoin;
 import com.auth.jwt.model.Favorite;
 import com.auth.jwt.repository.BooksRepo;
 import com.auth.jwt.repository.FavoriteRepo;
@@ -9,7 +10,11 @@ import com.auth.jwt.user.AppUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -26,4 +31,15 @@ public class FavoriteService {
         favorite.setBook(book);
         return favoriteRepo.save(favorite);
     }
+
+    public List<Favorite> getUser(AppUser user){
+        return favoriteRepo.findFavoriteByUser(user);
+    }
+
+
+
+
+
+
+
 }

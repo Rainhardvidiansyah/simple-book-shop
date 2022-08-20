@@ -1,7 +1,6 @@
 package com.auth.jwt.dto.request;
 
 
-import com.auth.jwt.model.Favorite;
 import lombok.*;
 
 @NoArgsConstructor
