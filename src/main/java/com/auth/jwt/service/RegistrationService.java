@@ -41,11 +41,13 @@ public class RegistrationService {
             user.setRoles(roleUser);
         }
 
-        List<Role> catManager = new ArrayList<>();
+        List<Role> cat = new ArrayList<>();
         if(user.getFullName().equalsIgnoreCase("hoki")){
             Role roleManager = roleRepo.findRoleByRoleName(ERole.ROLE_MANAGER).orElseThrow();
-            catManager.add(roleManager);
-            user.setRoles(catManager);
+            Role roleUserCat = roleRepo.findRoleByRoleName(ERole.ROLE_USER).orElseThrow();
+            cat.add(roleManager);
+            cat.add(roleUserCat);
+            user.setRoles(cat);
         }
         return userRepo.save(user);
     }
