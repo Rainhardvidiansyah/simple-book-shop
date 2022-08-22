@@ -1,7 +1,9 @@
 package com.auth.jwt.seed;
 
+import com.auth.jwt.model.Book;
 import com.auth.jwt.model.Category;
 import com.auth.jwt.model.ECategory;
+import com.auth.jwt.repository.BooksRepo;
 import com.auth.jwt.repository.CategoryRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,27 +19,25 @@ import java.util.List;
 @Slf4j
 public class BookCategoryInitialData implements ApplicationListener<ContextRefreshedEvent> {
 
-    private final CategoryRepo categoryRepo;
+    private final BooksRepo booksRepo;
+
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        try{
-            var philosophy = new Category(ECategory.PHILOSOPHY);
-            var mysticism = new Category(ECategory.MYSTICISM);
-            var islamicPhilosophy = new Category(ECategory.ISLAMIC_PHILOSOPHY);
-            var islamicTheology = new Category(ECategory.ISLAMIC_THEOLOGY);
-            var culturalStudies = new Category(ECategory.CULTURAL_STUDIES);
-            var socialScienceAndPolitics = new Category(ECategory.SOCIAL_POLITICS);
-            List<Category> savedCategories = List.of(philosophy, mysticism, islamicPhilosophy, islamicTheology,
-                    culturalStudies, socialScienceAndPolitics);
-            log.info("First data: {}", philosophy);
-            log.info("Second data: {}", mysticism);
-            log.info("All data: {}", savedCategories);
-            categoryRepo.saveAll(savedCategories);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        var book1 = Book.builder().id(1L)
+                .title("title 1").author("Author 1") .synopsis("Synopsis 1").tags("Tags 1, Category 1")
+                .price("75.000").build();
 
+        var book2 = Book.builder().id(2L)
+                .title("title 2").author("author2").synopsis("synopsis 2").tags("tags 2, category 2")
+                .price("55.750").build();
+
+        var book3 = Book.builder().id(3L)
+                .title("title 3").author("author 3").synopsis("synopsis 3").tags("tags 3, category 3")
+                .price("98.000").build();
+
+        log.info("Book 3 -> {}", book3);
+        booksRepo.saveAll(List.of(book1, book2, book3));
 
     }
 }
