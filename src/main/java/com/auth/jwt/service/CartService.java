@@ -21,7 +21,7 @@ public class CartService {
                 .orElseThrow(RuntimeException::new);
         var cart = new Cart();
         cart.setQuantity(quantity);
-//        cart.setTotalPrice(PLEASE CHANGE THIS VALUE TO DOUBLE OR ANYTHING ELSE THAT CORRESPONDS TO CURRENCY);
+        cart.setTotalPrice(cart.getQuantity() * book.getPrice());
         cart.setPrice(book.getPrice());
         cart.setNote(note);
         cart.setBook(book);

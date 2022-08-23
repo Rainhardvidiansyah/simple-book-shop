@@ -45,7 +45,6 @@ public class BooksService {
     }
 
     public Book saveBooks(Book book){
-        book.setPrice(convertPrice(book.getPrice()));
         book.setDateOfUpload(setDate());
         return booksRepo.save(book);
     }

@@ -39,7 +39,7 @@ public class Book {
     private List<BookImage> bookImage = new ArrayList<>();
 
     private int pages;
-    private String price;
+    private Double price;
     private String paperType;
     private int stocks;
     private String isbn;
@@ -47,7 +47,7 @@ public class Book {
     private String dateOfUpload;
 
     public Book(String title, String author, String synopsis, String tags,Set<Category> categories,
-                int pages, String price, String paperType, int stocks, String isbn,
+                int pages, Double price, String paperType, int stocks, String isbn,
                 String dateOfPublished, String dateOfUpload) {
         this.title = title;
         this.author = author;

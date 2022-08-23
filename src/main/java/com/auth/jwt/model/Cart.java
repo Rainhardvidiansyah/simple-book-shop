@@ -18,9 +18,9 @@ public class Cart {
 
     private int quantity;
 
-    private String price;
+    private Double price;
 
-    private String totalPrice;
+    private Double totalPrice;
 
     private String note;
 

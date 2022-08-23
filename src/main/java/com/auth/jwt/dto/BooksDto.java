@@ -22,7 +22,7 @@ public class BooksDto {
     private String tags;
     private Set<Category> categories = new HashSet<>();
     private int pages;
-    private String price;
+    private Double price;
     private String paperType;
     private int stocks;
     private String isbn;
