@@ -7,6 +7,8 @@ import com.auth.jwt.user.AppUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CartService {
@@ -25,5 +27,10 @@ public class CartService {
         cart.setBook(book);
         cart.setUser(user);
         return cartRepo.save(cart);
+    }
+
+
+    public List<Cart> joinCartAndUser(AppUser user){
+        return cartRepo.findCartByUser(user);
     }
 }
