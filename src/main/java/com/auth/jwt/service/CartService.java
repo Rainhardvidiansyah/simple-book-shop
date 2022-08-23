@@ -1,16 +1,21 @@
 package com.auth.jwt.service;
 
+import com.auth.jwt.dto.response.CartResponse;
+import com.auth.jwt.dto.response.CartResponseForUser;
 import com.auth.jwt.model.Cart;
 import com.auth.jwt.repository.BooksRepo;
 import com.auth.jwt.repository.CartRepo;
 import com.auth.jwt.user.AppUser;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CartService {
 
     private final CartRepo cartRepo;
@@ -29,8 +34,19 @@ public class CartService {
         return cartRepo.save(cart);
     }
 
-
-    public List<Cart> joinCartAndUser(AppUser user){
-        return cartRepo.findCartByUser(user);
+    public CartResponseForUser joinCartAndUser(AppUser user){
+        List<Cart> carts = cartRepo.findCartByUser(user);
+        List<CartResponse> cartResponses = new ArrayList<>();
+        double totalCost = 0;
+        double totalPrice = 0;
+        for(Cart cart: carts){
+            var cartResponse = new CartResponse(cart);
+            totalCost += cart.getQuantity() * cart.getBook().getPrice();
+            cartResponses.add(cartResponse);
+        }
+        var responseForUser = new CartResponseForUser();
+        responseForUser.setTotalCost(totalCost);
+        responseForUser.setCartResponses(cartResponses);
+        return responseForUser;
     }
 }
