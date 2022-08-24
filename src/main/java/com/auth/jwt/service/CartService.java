@@ -10,9 +10,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -49,4 +51,35 @@ public class CartService {
         responseForUser.setCartResponses(cartResponses);
         return responseForUser;
     }
+
+    private void deleteCart(Long cartId){
+        cartRepo.deleteById(cartId);
+    }
+
+    @Transactional
+    public Cart editCart(Long cartId, int quantity, String note, AppUser user) {
+        Optional<Cart> cart = cartRepo.findById(cartId);
+        if (cart.isEmpty()) {
+            throw new RuntimeException("Cart Not Found!");
+        }
+        Cart newCart = cart.get();
+        if (newCart.getUser() != user) {
+            throw new RuntimeException("User not same!!");
+        }
+        if(!noteNotNullOrEmpty(note)) {
+            newCart.setNote(newCart.getNote());
+        } else {
+            newCart.setNote(note);
+        }
+        newCart.setQuantity(quantity);
+        newCart.setTotalPrice(newCart.getPrice() * quantity);
+        return cartRepo.save(newCart);
+    }
+
+
+
+    private static boolean noteNotNullOrEmpty(String note){
+        return !note.isEmpty();
+    }
+
 }

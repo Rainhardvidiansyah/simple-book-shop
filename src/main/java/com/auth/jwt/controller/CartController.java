@@ -1,7 +1,9 @@
 package com.auth.jwt.controller;
 
 import com.auth.jwt.dto.request.CartRequestDto;
+import com.auth.jwt.dto.request.EditCartRequestDto;
 import com.auth.jwt.dto.response.CartResponse;
+import com.auth.jwt.model.Cart;
 import com.auth.jwt.repository.UserRepo;
 import com.auth.jwt.service.CartService;
 import lombok.RequiredArgsConstructor;
@@ -57,6 +59,21 @@ public class CartController {
         log.info("User email: {}", user.getEmail());
         log.info("Cart contains: {}", cartResponseForUser);
         return new ResponseEntity<>(cartResponseForUser, HttpStatus.OK);
+    }
+
+    @PutMapping("/update")
+    @ResponseBody
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole ('ROLE_USER')")
+    public ResponseEntity<?> editCart(@RequestParam Long cart_Id, @RequestBody EditCartRequestDto editDto){
+        var email = servletRequest.getUserPrincipal().getName();
+        var user = userRepo.findAppUserByEmail(email)
+                .orElseThrow(RuntimeException::new);
+        if(editDto.getQuantity() == 0){
+            return new ResponseEntity<>("Cart cannot be empty!", HttpStatus.BAD_REQUEST);
+        }
+        Cart savedCart = cartService.editCart(cart_Id, editDto.getQuantity(), editDto.getNote(), user);
+        var response = new CartResponse(savedCart);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 

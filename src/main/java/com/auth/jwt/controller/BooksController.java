@@ -108,7 +108,7 @@ public class BooksController {
             return new ResponseEntity<>(BookResponse.From(book.get()), HttpStatus.OK);
         }
 
-    @PutMapping("/update") // /update/?data_id=1
+    @PutMapping("/update")
     @ResponseBody
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> updateBook(@RequestParam Long data_id,
@@ -181,7 +181,7 @@ public class BooksController {
 
     @PostMapping("/add-images/{book_id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?>  addImage(@PathVariable("book_id") Long bookId,
+    public ResponseEntity<?> addImage(@PathVariable("book_id") Long bookId,
                                       @RequestParam("file") MultipartFile[] file){
         Map<String, Boolean> failedResponse = new HashMap<>();
         failedResponse.put("Failed", Boolean.FALSE);
@@ -189,10 +189,8 @@ public class BooksController {
             return new ResponseEntity<>(failedResponse, HttpStatus.BAD_REQUEST);
         }
         booksService.addAnotherImage(bookId, file);
-
         Map<String, Boolean> successfulResponse = new HashMap<>();
         successfulResponse.put("Succeeded", Boolean.TRUE);
-
         return new ResponseEntity<>(successfulResponse, HttpStatus.OK);
 
     }
