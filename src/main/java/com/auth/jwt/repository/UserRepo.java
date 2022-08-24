@@ -11,6 +11,7 @@ import java.util.Optional;
 public interface UserRepo extends JpaRepository<AppUser, Long> {
 
     Optional<AppUser> findAppUserByEmail(String email);
+    Optional<AppUser> findAppUserByFullName(String fullName);
 
     @Query("select a from AppUser a where a.fullName = ?1")
     public String userNameCannotBeSame(String fullName);

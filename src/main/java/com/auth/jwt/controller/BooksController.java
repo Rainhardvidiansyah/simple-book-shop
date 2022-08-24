@@ -54,28 +54,7 @@ public class BooksController {
         return new ResponseEntity<>(savedBook, HttpStatus.OK);
     }
 
-    @GetMapping("/test-string")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER') or hasRole('ROLE_USER')")
-    public String test(){
-        return "Halo";
-    }
-
-
-    @GetMapping("/user")
-    @PreAuthorize("hasRole('ROLE_USER')")
-    public String testUser(Authentication authentication){
-        return String.format("Hallo %s", authentication.getName());
-    }
-
-
-    @GetMapping("/test-user")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER') or hasRole('ROLE_USER')")
-    private String getLoggedInUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return String.format("Hello Mr/Mrs %s", authentication.getName());
-    }
-
-    @GetMapping("/get-all")
+    @GetMapping("/get-all-books")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> findAllBooks(){
         var bookList = booksService.findAllBooks();
