@@ -52,7 +52,7 @@ public class CartService {
         return responseForUser;
     }
 
-    private void deleteCart(Long cartId){
+    public void deleteCart(Long cartId){
         cartRepo.deleteById(cartId);
     }
 
@@ -75,8 +75,6 @@ public class CartService {
         newCart.setTotalPrice(newCart.getPrice() * quantity);
         return cartRepo.save(newCart);
     }
-
-
 
     private static boolean noteNotNullOrEmpty(String note){
         return !note.isEmpty();

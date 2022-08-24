@@ -21,7 +21,6 @@ public class UserInitialData implements ApplicationListener<ContextRefreshedEven
 
     private final UserRepo userRepo;
     private final RoleRepo roleRepo;
-
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -39,17 +38,27 @@ public class UserInitialData implements ApplicationListener<ContextRefreshedEven
         roleRepo.saveAll(List.of(adminRole, userRole, managerRole));
 
 
-        AppUser user = new AppUser();
+        var user = new AppUser();
         user.setFullName("Rainhard");
         user.setEmail("rainhard@gmail.com");
         user.setPassword(passwordEncoder.encode("rainhard"));
-
         List<Role> rainhardRoles = new ArrayList<>();
         rainhardRoles.addAll(List.of(adminRole, userRole, managerRole));
         user.setRoles(rainhardRoles);
-
-        AppUser savedUser = userRepo.save(user);
+        var savedUser = userRepo.save(user);
         log.info("Saved user: {}", savedUser);
-//        log.info("User data: {}", user);
+
+
+
+        var user2 = new AppUser();
+        user2.setFullName("Maulida");
+        user2.setEmail("maulida@gmail.com");
+        user2.setPassword(passwordEncoder.encode("maulida"));
+        List<Role> rolesUser2 = new ArrayList<>();
+        rolesUser2.add(userRole);
+        user2.setRoles(rolesUser2);
+        var savedUser2 = userRepo.save(user2);
+        log.info("Saved user 2: {}", savedUser2);
+
     }
 }

@@ -14,7 +14,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/cart")
@@ -61,6 +63,15 @@ public class CartController {
         return new ResponseEntity<>(cartResponseForUser, HttpStatus.OK);
     }
 
+    @DeleteMapping("/delete-book?{book_id}")
+    public ResponseEntity<Map<String, Boolean>> deleteCart(@PathVariable("book_id") Long id){
+        cartService.deleteCart(id);
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("Succeed", Boolean.TRUE);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    }
+
     @PutMapping("/update")
     @ResponseBody
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole ('ROLE_USER')")
@@ -69,7 +80,8 @@ public class CartController {
         var user = userRepo.findAppUserByEmail(email)
                 .orElseThrow(RuntimeException::new);
         if(editDto.getQuantity() == 0){
-            return new ResponseEntity<>("Cart cannot be empty!", HttpStatus.BAD_REQUEST);
+            deleteCart(cart_Id);
+            //return new ResponseEntity<>("Cart cannot be empty!", HttpStatus.BAD_REQUEST);
         }
         Cart savedCart = cartService.editCart(cart_Id, editDto.getQuantity(), editDto.getNote(), user);
         var response = new CartResponse(savedCart);
