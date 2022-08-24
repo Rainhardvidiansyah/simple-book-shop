@@ -1,7 +1,7 @@
 package com.auth.jwt.controller;
 
 import com.auth.jwt.activities.BookUploader;
-import com.auth.jwt.dto.BooksDto;
+import com.auth.jwt.dto.BooksDtoRequest;
 import com.auth.jwt.dto.request.FindAuthorAndBooksRequest;
 import com.auth.jwt.dto.request.FindBooksTagRequestDto;
 import com.auth.jwt.dto.response.BookResponse;
@@ -32,7 +32,7 @@ public class BooksController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/save-data")
-    public ResponseEntity<?> saveBookData(@RequestBody BooksDto booksDto){
+    public ResponseEntity<?> saveBookData(@RequestBody BooksDtoRequest booksDto){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(booksDto.getTitle().isEmpty() && booksDto.getTitle().isBlank()){
             return new ResponseEntity<>("Title must be written!", HttpStatus.BAD_REQUEST);
@@ -112,7 +112,7 @@ public class BooksController {
     @ResponseBody
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> updateBook(@RequestParam Long data_id,
-                                        @RequestBody BooksDto booksDto){
+                                        @RequestBody BooksDtoRequest booksDto){
         if(booksDto.getTitle().isEmpty()){
             return new ResponseEntity<>("Title must be written!", HttpStatus.BAD_REQUEST);
         }

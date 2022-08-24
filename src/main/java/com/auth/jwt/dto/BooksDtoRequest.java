@@ -14,7 +14,7 @@ import java.util.Set;
 DTO CLASS FOR BOOKS CONTROLLER
  */
 @Getter @Setter @AllArgsConstructor @NoArgsConstructor
-public class BooksDto {
+public class BooksDtoRequest {
 
     private String title;
     private String authorName;

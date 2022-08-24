@@ -15,7 +15,7 @@ public class RegistrationResponseDto {
         this.email = email;
     }
 
-    public static RegistrationResponseDto registrationResponse(AppUser user){
+    public static RegistrationResponseDto From(AppUser user){
         return new RegistrationResponseDto(user.getFullName(), user.getEmail());
     }
 }

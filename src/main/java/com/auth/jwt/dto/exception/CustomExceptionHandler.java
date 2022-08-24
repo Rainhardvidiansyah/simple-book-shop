@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
-
     @Override
     protected ResponseEntity<Object>
     handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers,
@@ -34,7 +33,6 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
                 .collect(Collectors.toList());
         responseBody.put("errors", errors);
         return new ResponseEntity<>(responseBody, headers, status);
-
     }
 
 }

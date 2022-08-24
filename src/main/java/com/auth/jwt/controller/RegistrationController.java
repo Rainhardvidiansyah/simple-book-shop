@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,21 +28,23 @@ public class RegistrationController {
     private final RegistrationService registrationService;
 
     @PostMapping("/registration")
-    public ResponseEntity<?> registration(@RequestBody RegistrationRequest request){
+    public ResponseEntity<?> registration(@RequestBody @Valid RegistrationRequest request, Errors errors){
         boolean userExisting = registrationService.checkUserExisting(request.getEmail());
         if(userExisting){
             return new ResponseEntity<>(String.format("%s has been registered", request.getEmail()),
                     HttpStatus.BAD_REQUEST);
+        }
+        if(errors.hasErrors()){
+            return new ResponseEntity<>(errorMessages(errors), HttpStatus.BAD_REQUEST);
         }
         AppUser user = new AppUser();
         user.setFullName(request.getFullName());
         user.setEmail(request.getEmail());
         user.setPassword(request.getPassword());
         AppUser savedUser = registrationService.registrationUser(user);
-        log.info("User just registered {}", user);
-        return new ResponseEntity<>(RegistrationResponseDto.registrationResponse(user), HttpStatus.OK);
+        log.info("User just registered {}", RegistrationResponseDto.From(savedUser));
+        return new ResponseEntity<>(RegistrationResponseDto.From(savedUser), HttpStatus.OK);
     }
-
 
     private static List<String> errorMessages(Errors errors){
         List<String> errorMessages = new ArrayList<>();
@@ -52,7 +55,6 @@ public class RegistrationController {
         }
         return errorMessages;
     }
-}
 
-//AppUser appUser = AppUser.createUserFrom(request); make this password encoded!
-//        log.info("User from static {}", appUser);
+
+}

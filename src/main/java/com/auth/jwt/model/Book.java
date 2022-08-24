@@ -1,10 +1,8 @@
 package com.auth.jwt.model;
 
-import com.auth.jwt.dto.BooksDto;
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.auth.jwt.dto.BooksDtoRequest;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
-import org.hibernate.type.AnyType;
 
 import javax.persistence.*;
 import java.util.*;
@@ -63,7 +61,7 @@ public class Book {
         this.dateOfUpload = dateOfUpload;
     }
 
-    public static Book saveFromDto(BooksDto booksDto){
+    public static Book saveFromDto(BooksDtoRequest booksDto){
         return new Book(booksDto.getTitle(), booksDto.getAuthorName(),
                 booksDto.getSynopsis(), booksDto.getTags(),
                 booksDto.getCategories(), booksDto.getPages(), booksDto.getPrice(),
