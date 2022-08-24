@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -38,7 +39,6 @@ public class CartService {
         List<Cart> carts = cartRepo.findCartByUser(user);
         List<CartResponse> cartResponses = new ArrayList<>();
         double totalCost = 0;
-        double totalPrice = 0;
         for(Cart cart: carts){
             var cartResponse = new CartResponse(cart);
             totalCost += cart.getQuantity() * cart.getBook().getPrice();
