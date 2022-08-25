@@ -2,10 +2,7 @@ package com.auth.jwt.model;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @NoArgsConstructor @AllArgsConstructor
@@ -16,13 +13,14 @@ public class Address {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String street;
+    @Column(length = 500)
+    private String completeAddress;
 
-    private String houseNumber;
-
-    private String district;
+    private String phoneNumber;
 
     private String postalCode;
+
+
 
 
 }

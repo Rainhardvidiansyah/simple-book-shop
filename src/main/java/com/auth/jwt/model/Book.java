@@ -1,6 +1,6 @@
 package com.auth.jwt.model;
 
-import com.auth.jwt.dto.BooksDtoRequest;
+import com.auth.jwt.dto.request.BooksDtoRequest;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 

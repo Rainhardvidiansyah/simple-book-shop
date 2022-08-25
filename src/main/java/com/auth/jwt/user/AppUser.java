@@ -1,6 +1,7 @@
 package com.auth.jwt.user;
 
 import com.auth.jwt.dto.request.RegistrationRequest;
+import com.auth.jwt.dto.request.UpdateProfileDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -38,11 +39,20 @@ public class AppUser {
         this.roles = roles;
     }
 
+    public AppUser(String fullName, String email) {
+        this.fullName = fullName;
+        this.email = email;
+    }
+
     public static AppUser createUserFrom(RegistrationRequest request){
         AppUser user = new AppUser();
         user.setFullName(request.getFullName());
         user.setEmail(request.getEmail());
         user.setPassword(request.getPassword());
         return user;
+    }
+
+    public static AppUser updateUserFrom(UpdateProfileDto updateProfileDto){
+        return new AppUser(updateProfileDto.getEmail(), updateProfileDto.getFullName());
     }
 }

@@ -1,7 +1,7 @@
 package com.auth.jwt.controller;
 
 import com.auth.jwt.activities.BookUploader;
-import com.auth.jwt.dto.BooksDtoRequest;
+import com.auth.jwt.dto.request.BooksDtoRequest;
 import com.auth.jwt.dto.request.FindAuthorAndBooksRequest;
 import com.auth.jwt.dto.request.FindBooksTagRequestDto;
 import com.auth.jwt.dto.response.BookResponse;

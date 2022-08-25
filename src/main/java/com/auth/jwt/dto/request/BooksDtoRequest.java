@@ -1,4 +1,4 @@
-package com.auth.jwt.dto;
+package com.auth.jwt.dto.request;
 
 
 import com.auth.jwt.model.Category;
@@ -10,9 +10,7 @@ import lombok.Setter;
 import java.util.HashSet;
 import java.util.Set;
 
-/*
-DTO CLASS FOR BOOKS CONTROLLER
- */
+
 @Getter @Setter @AllArgsConstructor @NoArgsConstructor
 public class BooksDtoRequest {
 
