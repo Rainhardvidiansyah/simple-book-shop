@@ -33,7 +33,7 @@ public class UserController {
         return user.get().getEmail();
     }
 
-    @GetMapping("{user_id}")
+
     public String getUser(@PathVariable("user_id") Long id){
         Optional<AppUser> user = userRepo.findById(id);
         Authentication authentication = (Authentication) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -80,11 +80,17 @@ public class UserController {
         return new String("Data successfully changed!");
     }
 
+    @PreAuthorize("#name == authentication.name or " +
+            "hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER') or hasRole('ROLE_USER')")
+    public String getData(@Param("name") String username){
+        //var user = userRepo.findAppUserByFullName(username);
+        return username.toUpperCase();
+    }
+
     @GetMapping()
-    @PreAuthorize("#name == authentication.name or hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER') or hasRole('ROLE_USER')")
-    public AppUser getData(@Param("name") String username){
-        var user = userRepo.findAppUserByFullName(username);
-        return user.get();
+    @PreAuthorize("#id == principal.id or hasRole('ROLE_ADMIN')")
+    public AppUser doSomething(@RequestParam Long id){
+        return userRepo.findById(id).get();
     }
 
 
