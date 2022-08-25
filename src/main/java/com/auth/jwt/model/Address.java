@@ -1,11 +1,14 @@
 package com.auth.jwt.model;
 
+import com.auth.jwt.dto.request.AddressRequestDto;
+import com.auth.jwt.user.AppUser;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
-@NoArgsConstructor @AllArgsConstructor
+@NoArgsConstructor
 @Getter @Setter @ToString
 public class Address {
 
@@ -20,7 +23,26 @@ public class Address {
 
     private String postalCode;
 
+    @JsonBackReference
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private AppUser user;
 
+    public Address(String completeAddress, String phoneNumber, String postalCode) {
+        this.completeAddress = completeAddress;
+        this.phoneNumber = phoneNumber;
+        this.postalCode = postalCode;
+    }
 
+    public Address(String completeAddress, String phoneNumber, String postalCode, AppUser user) {
+        this.completeAddress = completeAddress;
+        this.phoneNumber = phoneNumber;
+        this.postalCode = postalCode;
+        this.user = user;
+    }
 
+    public static Address From(AddressRequestDto addressDto){
+        return new Address(addressDto.getCompleteAddress(), addressDto.getPhoneNumber(),
+                addressDto.getPostalCode());
+    }
 }

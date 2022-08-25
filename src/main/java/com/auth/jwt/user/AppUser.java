@@ -2,6 +2,8 @@ package com.auth.jwt.user;
 
 import com.auth.jwt.dto.request.RegistrationRequest;
 import com.auth.jwt.dto.request.UpdateProfileDto;
+import com.auth.jwt.model.Address;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -30,6 +32,10 @@ public class AppUser {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private List<Role> roles = new ArrayList<>();
+
+    @JsonManagedReference
+    @OneToOne(mappedBy = "user")
+    private Address address;
 
     public AppUser(String fullName, String password, String email, List<Role> roles) {
         this.id = id;
