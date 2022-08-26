@@ -22,7 +22,7 @@ import java.util.*;
 
 
 @RestController
-@RequestMapping("/api/book")
+@RequestMapping("/api/v1/book")
 @RequiredArgsConstructor
 @Slf4j
 public class BooksController {
@@ -31,7 +31,7 @@ public class BooksController {
     private final BookUploaderRepo uploaderRepo;
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping("/save-data")
+    @PostMapping("/save")
     public ResponseEntity<?> saveBookData(@RequestBody BooksDtoRequest booksDto){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(booksDto.getTitle().isEmpty() && booksDto.getTitle().isBlank()){
@@ -50,18 +50,18 @@ public class BooksController {
         roles.add(String.valueOf(authentication.getAuthorities()));
         uploader.setRoles(roles);
         BookUploader savedUploader = uploaderRepo.save(uploader);
-        log.info("Upload data: {}", savedUploader);
-        return new ResponseEntity<>(savedBook, HttpStatus.OK);
+        log.info("Upload book: {}", savedUploader);
+        return new ResponseEntity<>(savedBook, HttpStatus.CREATED);
     }
 
-    @GetMapping("/get-all-books")
+    @GetMapping("/all")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> findAllBooks(){
         var bookList = booksService.findAllBooks();
         return new ResponseEntity<>(responses(bookList), HttpStatus.OK);
     }
 
-    @PostMapping("/search")
+    @PostMapping("/search/author")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER') or hasRole('ROLE_USER')")
     public ResponseEntity<?> findTitleByAuthor(@RequestBody FindAuthorAndBooksRequest request){
         var bookList = booksService.findBooksByAuthorName(request.getAuthorName());
@@ -81,8 +81,7 @@ public class BooksController {
     public ResponseEntity<?> findBookId(@RequestParam Long data_id){
         var book = booksService.findBookId(data_id);
         if(book.isEmpty()){
-            assert HttpStatus.resolve(201) != null;
-            return new ResponseEntity<>("Book not Found", HttpStatus.resolve(201));
+            return new ResponseEntity<>("Book not Found", HttpStatus.BAD_REQUEST);
         }
             return new ResponseEntity<>(BookResponse.From(book.get()), HttpStatus.OK);
         }
@@ -90,29 +89,28 @@ public class BooksController {
     @PutMapping("/update")
     @ResponseBody
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> updateBook(@RequestParam Long data_id,
+    public ResponseEntity<?> updateBook(@RequestParam Long id,
                                         @RequestBody BooksDtoRequest booksDto){
         if(booksDto.getTitle().isEmpty()){
             return new ResponseEntity<>("Title must be written!", HttpStatus.BAD_REQUEST);
         }
-        var book = booksService.findBookId(data_id);
+        var book = booksService.findBookId(id);
         if(book.isEmpty()){
-            assert HttpStatus.resolve(201) != null;
-            return new ResponseEntity<>("Book not Found", HttpStatus.resolve(201));
+            return new ResponseEntity<>("Book not Found", HttpStatus.BAD_REQUEST);
         }
-        var updatedBook = booksService.updateBook(data_id, Book.saveFromDto(booksDto));
+        var updatedBook = booksService.updateBook(id, Book.saveFromDto(booksDto));
         log.info("Updated {}", updatedBook);
         return new ResponseEntity<>(BookResponse.From(updatedBook), HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete/{data_id}")
+    @DeleteMapping("/{id}/delete")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Map<String, Boolean>> deleteBook(@PathVariable("data_id") Long id){
+    public ResponseEntity<Map<String, Boolean>> deleteBook(@PathVariable("id") Long id){
         var book = booksService.findBookId(id);
         booksService.deleteBook(book.get().getId());
         Map<String, Boolean> response = new HashMap<>();
         response.put("Deleted", Boolean.TRUE);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/search/tags")
@@ -147,7 +145,7 @@ public class BooksController {
         return responses;
     }
 
-    @PostMapping("/add-image/{book_id}")
+    @PostMapping("/{book_id}/add-image")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> storeImageForBook(@PathVariable("book_id") Long bookId,
                                                @RequestParam("file") MultipartFile file){
@@ -158,9 +156,9 @@ public class BooksController {
         return new ResponseEntity<>(savedImagesInBook, HttpStatus.OK);
     }
 
-    @PostMapping("/add-images/{book_id}")
+    @PostMapping("/{book_id}/add-images")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> addImage(@PathVariable("book_id") Long bookId,
+    public ResponseEntity<?> addImages(@PathVariable("book_id") Long bookId,
                                       @RequestParam("file") MultipartFile[] file){
         Map<String, Boolean> failedResponse = new HashMap<>();
         failedResponse.put("Failed", Boolean.FALSE);
@@ -171,7 +169,6 @@ public class BooksController {
         Map<String, Boolean> successfulResponse = new HashMap<>();
         successfulResponse.put("Succeeded", Boolean.TRUE);
         return new ResponseEntity<>(successfulResponse, HttpStatus.OK);
-
     }
 
 }
