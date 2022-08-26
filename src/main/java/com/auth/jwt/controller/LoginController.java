@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
-@RequestMapping("/login")
+@RequestMapping("api/v1/user")
 public class LoginController {
 
     private final AuthenticationManager authenticationManager;
@@ -32,7 +32,7 @@ public class LoginController {
         this.jwtUtils = jwtUtils;
     }
 
-    @PostMapping("/authenticate")
+    @PostMapping("/login")
     public ResponseEntity<?> loginFunc(@RequestBody LoginRequestDto loginRequest){
         try {
             if(loginRequest.getEmail().isEmpty() && loginRequest.getEmail().isBlank()){
