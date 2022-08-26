@@ -22,7 +22,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/favorite")
+@RequestMapping("/api/v1/favorite")
 @RequiredArgsConstructor
 @Slf4j
 public class FavoriteController {
@@ -44,7 +44,7 @@ public class FavoriteController {
                 user.getFullName()), HttpStatus.OK);
     }
 
-    @GetMapping("/my")
+    @GetMapping("/my-favorites")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> getUserInFavorite(){
         var email = servletRequest.getUserPrincipal().getName();

@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/cart")
+@RequestMapping("/api/v1/cart")
 @RequiredArgsConstructor
 @Slf4j
 public class CartController {
@@ -29,7 +29,7 @@ public class CartController {
     private final UserRepo userRepo;
 
 
-    @PostMapping("/add-book")
+    @PostMapping("/add")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole ('ROLE_USER')")
     public ResponseEntity<?> addBookToCart(@RequestBody CartRequestDto cartDto){
         var email = servletRequest.getUserPrincipal().getName();
@@ -47,7 +47,7 @@ public class CartController {
         return !cartResponses.isEmpty();
     }
 
-    @GetMapping("/get-cart")
+    @GetMapping("/all")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole ('ROLE_USER')")
     public ResponseEntity<?> userCart(){
         String email = servletRequest.getUserPrincipal().getName();
@@ -63,27 +63,25 @@ public class CartController {
         return new ResponseEntity<>(cartResponseForUser, HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete-book?{book_id}")
-    public ResponseEntity<Map<String, Boolean>> deleteCart(@PathVariable("book_id") Long id){
+    @DeleteMapping("/{cart_id}/delete")
+    public ResponseEntity<Map<String, Boolean>> deleteCart(@PathVariable("cart_id") Long id){
         cartService.deleteCart(id);
         Map<String, Boolean> response = new HashMap<>();
         response.put("Succeed", Boolean.TRUE);
         return new ResponseEntity<>(response, HttpStatus.OK);
-
     }
 
     @PutMapping("/update")
     @ResponseBody
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole ('ROLE_USER')")
-    public ResponseEntity<?> editCart(@RequestParam Long cart_Id, @RequestBody EditCartRequestDto editDto){
+    public ResponseEntity<?> editCart(@RequestParam Long cart_id, @RequestBody EditCartRequestDto editDto){
         var email = servletRequest.getUserPrincipal().getName();
         var user = userRepo.findAppUserByEmail(email)
                 .orElseThrow(RuntimeException::new);
         if(editDto.getQuantity() == 0){
-            deleteCart(cart_Id);
-            //return new ResponseEntity<>("Cart cannot be empty!", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Cart cannot be empty!", HttpStatus.BAD_REQUEST);
         }
-        Cart savedCart = cartService.editCart(cart_Id, editDto.getQuantity(), editDto.getNote(), user);
+        Cart savedCart = cartService.editCart(cart_id, editDto.getQuantity(), editDto.getNote(), user);
         var response = new CartResponse(savedCart);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
