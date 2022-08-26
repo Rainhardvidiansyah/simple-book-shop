@@ -14,7 +14,6 @@ public class UpdateProfileDto {
     private String email;
     private String fullName;
 
-
     public UpdateProfileDto(String email, String fullName) {
         this.email = email;
         this.fullName = fullName;

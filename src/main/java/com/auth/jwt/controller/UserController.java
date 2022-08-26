@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -30,35 +31,6 @@ public class UserController {
     private final AppUserService userService;
 
 
-
-    @ResponseBody
-    @PreAuthorize("authentication.principal.username == #username || hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
-    public String getUserInfo(@RequestParam String name){
-        var user = userRepo.findAppUserByFullName(name);
-        return user.get().getEmail();
-    }
-
-
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER') or hasRole('ROLE_USER')")
-    private String getLoggedInUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return String.format("Hello Mr/Mrs %s", authentication.getName());
-    }
-
-    public String updateUserDetails(@PathVariable("userId") Long userId, Principal principal) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) principal;
-        if(userDetails.getId() == userId){
-        }
-        return userDetails.getUsername();
-    }
-
-
-    @PreAuthorize("#name == authentication.name or " +
-            "hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER') or hasRole('ROLE_USER')")
-    public String getData(@Param("name") String username){
-        //var user = userRepo.findAppUserByFullName(username);
-        return username.toUpperCase();
-    }
 
     @PreAuthorize("#_userid == principal.id or hasRole('ROLE_ADMIN')")
     public String doSomething(@RequestParam Long _userid){
@@ -86,6 +58,12 @@ public class UserController {
             return "Not found anything here";
         }
         return userID.get().getFullName();
+    }
+
+    @GetMapping()
+    @PreAuthorize("#name == principal.username or hasRole('ROLE_ADMIN')")
+    public String getProfileName(@RequestParam String name){
+        return "Hello";
     }
 
 
