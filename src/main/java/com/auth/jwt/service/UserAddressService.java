@@ -22,9 +22,14 @@ public class UserAddressService {
     public Address saveAddress(Long user_id, String completeAddress, String phoneNumber, String postalCode ){
         var user = userRepo.findById(user_id)
                 .orElseThrow(RuntimeException::new);
-        var address = new Address(completeAddress, newPhoneWithIndonesiaCode(phoneNumber), postalCode, user);
-        user.setAddress(address);
-        //ToDo: Check if user has its address then throw an exception
+        Address address = new Address();
+        if(address.getUser() != null){
+            address.setCompleteAddress(completeAddress);
+            address.setPhoneNumber(phoneNumber);
+            address.setPostalCode(postalCode);
+            address.setUser(user);
+            user.setAddress(address);
+        }
         return addressRepo.save(address);
     }
 

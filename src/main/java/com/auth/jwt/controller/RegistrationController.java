@@ -43,7 +43,7 @@ public class RegistrationController {
         user.setPassword(request.getPassword());
         AppUser savedUser = registrationService.registrationUser(user);
         log.info("User just registered {}", RegistrationResponseDto.From(savedUser));
-        return new ResponseEntity<>(RegistrationResponseDto.From(savedUser), HttpStatus.OK);
+        return new ResponseEntity<>(RegistrationResponseDto.From(savedUser), HttpStatus.CREATED);
     }
 
     private static List<String> errorMessages(Errors errors){
