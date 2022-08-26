@@ -21,13 +21,13 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/user")
 @Slf4j
 public class UserAddressController {
 
     private final UserAddressService addressService;
 
-    @PostMapping("/{user_id}/address.save")
+    @PostMapping("/{user_id}/save-address")
     @PreAuthorize("#userid == principal.id or hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> insertAddress(@PathVariable("user_id") Long userid,
                                            @RequestBody @Valid AddressRequestDto addressDto, Errors errors){
