@@ -55,7 +55,7 @@ public class BooksController {
     }
 
     @GetMapping("/all")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER') or hasRole('ROLE_USER')")
     public ResponseEntity<?> findAllBooks(){
         var bookList = booksService.findAllBooks();
         return new ResponseEntity<>(responses(bookList), HttpStatus.OK);
@@ -114,7 +114,7 @@ public class BooksController {
     }
 
     @PostMapping("/search/tags")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     public ResponseEntity<?> findTagsBook(@RequestBody FindBooksTagRequestDto requestDto){
         var bookList = booksService.findBooksByTags(requestDto.getTags());
         List<BookResponse> responses = new ArrayList<>();
