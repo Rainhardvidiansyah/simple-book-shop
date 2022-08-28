@@ -32,6 +32,9 @@ public class CartController {
     @PostMapping("/add")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole ('ROLE_USER')")
     public ResponseEntity<?> addBookToCart(@RequestBody CartRequestDto cartDto){
+        if (cartDto.getQuantity() < 1){
+            return new ResponseEntity<>("Cart cannot be empty!", HttpStatus.BAD_REQUEST);
+        }
         var email = servletRequest.getUserPrincipal().getName();
         var user = userRepo.findAppUserByEmail(email)
                 .orElseThrow(RuntimeException::new);
