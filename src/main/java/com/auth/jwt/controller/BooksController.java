@@ -6,7 +6,7 @@ import com.auth.jwt.dto.request.FindAuthorAndBooksRequest;
 import com.auth.jwt.dto.request.FindBooksTagRequestDto;
 import com.auth.jwt.dto.response.BookResponse;
 import com.auth.jwt.model.Book;
-import com.auth.jwt.dto.utils.repository.BookUploaderRepo;
+import com.auth.jwt.repository.BookUploaderRepo;
 import com.auth.jwt.service.BooksService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

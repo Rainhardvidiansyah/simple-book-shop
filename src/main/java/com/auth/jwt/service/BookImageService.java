@@ -1,8 +1,8 @@
 package com.auth.jwt.service;
 
 import com.auth.jwt.model.BookImage;
-import com.auth.jwt.dto.utils.repository.BookImageRepo;
-import com.auth.jwt.dto.utils.repository.BooksRepo;
+import com.auth.jwt.repository.BookImageRepo;
+import com.auth.jwt.repository.BooksRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

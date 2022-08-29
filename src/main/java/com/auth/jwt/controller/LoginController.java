@@ -9,6 +9,7 @@ import com.auth.jwt.dto.response.LoginResponseDto;
 import com.auth.jwt.dto.response.TokenRefreshResponse;
 import com.auth.jwt.security.jwt.JwtUtils;
 import com.auth.jwt.security.jwt.RefreshToken;
+import com.auth.jwt.service.AppUserService;
 import com.auth.jwt.service.RefreshTokenService;
 import com.auth.jwt.user.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,13 +36,15 @@ public class LoginController {
     private final JwtUtils jwtUtils;
 
     private final RefreshTokenService refreshTokenService;
+    private final AppUserService userService;
 
     @Autowired
     public LoginController(AuthenticationManager authenticationManager,
-                           JwtUtils jwtUtils, RefreshTokenService refreshTokenService) {
+                           JwtUtils jwtUtils, RefreshTokenService refreshTokenService, AppUserService userService) {
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
         this.refreshTokenService = refreshTokenService;
+        this.userService = userService;
     }
 
     @PostMapping("/login")
@@ -70,17 +73,18 @@ public class LoginController {
     @GetMapping("/logout")
     @PreAuthorize("#userid == principal.id")
     public ResponseEntity<?> logoutUser(@RequestParam(required = true) long userid) {
-        var user = refreshTokenService.deleteByUserId(userid);
+        var user = userService.deleteByUserId(userid);
         return new ResponseEntity<>(String.format("User with %d has logged out", userid), HttpStatus.OK);
-
     }
+
+
     @PostMapping("/refreshtoken")
     public ResponseEntity<?> refreshToken(@Valid @RequestBody TokenRequestDto tokenRequestDto) {
         return refreshTokenService.findToken(tokenRequestDto.getRefreshToken())
                 .map(refreshTokenService::verifyExpiration)
                 .map(RefreshToken::getUser)
                 .map(userData -> {
-                    String token = jwtUtils.generateTokenFromUsername(userData.getFullName());
+                    String token = jwtUtils.generateTokenFromUserName(userData.getFullName());
                     return ResponseEntity.ok(new TokenRefreshResponse(token, tokenRequestDto.getRefreshToken()));
                 })
                 .orElseThrow(() -> new JwtTokenRefreshException(tokenRequestDto.getRefreshToken(),

@@ -4,7 +4,7 @@ import com.auth.jwt.dto.request.CartRequestDto;
 import com.auth.jwt.dto.request.EditCartRequestDto;
 import com.auth.jwt.dto.response.CartResponse;
 import com.auth.jwt.model.Cart;
-import com.auth.jwt.dto.utils.repository.UserRepo;
+import com.auth.jwt.repository.UserRepo;
 import com.auth.jwt.service.CartService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

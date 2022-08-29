@@ -3,8 +3,8 @@ package com.auth.jwt.service;
 
 
 import com.auth.jwt.model.Favorite;
-import com.auth.jwt.dto.utils.repository.BooksRepo;
-import com.auth.jwt.dto.utils.repository.FavoriteRepo;
+import com.auth.jwt.repository.BooksRepo;
+import com.auth.jwt.repository.FavoriteRepo;
 import com.auth.jwt.user.AppUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

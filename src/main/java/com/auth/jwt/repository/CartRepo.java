@@ -1,4 +1,4 @@
-package com.auth.jwt.dto.utils.repository;
+package com.auth.jwt.repository;
 
 import com.auth.jwt.model.Cart;
 import com.auth.jwt.user.AppUser;

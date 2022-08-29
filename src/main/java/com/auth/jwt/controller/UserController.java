@@ -1,7 +1,7 @@
 package com.auth.jwt.controller;
 
 import com.auth.jwt.dto.request.UpdateProfileDto;
-import com.auth.jwt.dto.utils.repository.UserRepo;
+import com.auth.jwt.repository.UserRepo;
 import com.auth.jwt.service.AppUserService;
 import com.auth.jwt.user.AppUser;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.auth.jwt.dto.utils.repository;
+package com.auth.jwt.repository;
 
 import com.auth.jwt.dto.response.FavoriteResponseInJoin;
 import com.auth.jwt.model.Favorite;

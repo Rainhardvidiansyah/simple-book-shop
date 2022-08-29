@@ -1,4 +1,4 @@
-package com.auth.jwt.dto.utils.repository;
+package com.auth.jwt.repository;
 
 import com.auth.jwt.model.BookImage;
 import org.springframework.data.jpa.repository.JpaRepository;

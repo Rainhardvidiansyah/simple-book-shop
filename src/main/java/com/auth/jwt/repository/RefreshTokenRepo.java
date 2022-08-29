@@ -1,4 +1,4 @@
-package com.auth.jwt.dto.utils.repository;
+package com.auth.jwt.repository;
 
 import com.auth.jwt.security.jwt.RefreshToken;
 import com.auth.jwt.user.AppUser;

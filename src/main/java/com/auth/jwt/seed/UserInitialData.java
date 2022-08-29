@@ -1,7 +1,7 @@
 package com.auth.jwt.seed;
 
-import com.auth.jwt.dto.utils.repository.RoleRepo;
-import com.auth.jwt.dto.utils.repository.UserRepo;
+import com.auth.jwt.repository.RoleRepo;
+import com.auth.jwt.repository.UserRepo;
 import com.auth.jwt.user.AppUser;
 import com.auth.jwt.user.ERole;
 import com.auth.jwt.user.Role;
