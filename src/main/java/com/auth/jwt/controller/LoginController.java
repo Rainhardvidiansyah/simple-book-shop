@@ -77,7 +77,6 @@ public class LoginController {
         return new ResponseEntity<>(String.format("User with %d has logged out", userid), HttpStatus.OK);
     }
 
-
     @PostMapping("/refreshtoken")
     public ResponseEntity<?> refreshToken(@Valid @RequestBody TokenRequestDto tokenRequestDto) {
         return refreshTokenService.findToken(tokenRequestDto.getRefreshToken())

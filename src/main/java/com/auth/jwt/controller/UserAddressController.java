@@ -3,6 +3,7 @@ package com.auth.jwt.controller;
 
 import com.auth.jwt.dto.request.AddressRequestDto;
 import com.auth.jwt.dto.response.AddressResponseDto;
+import com.auth.jwt.model.Address;
 import com.auth.jwt.service.UserAddressService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,8 +37,7 @@ public class UserAddressController {
             errResponse.put("Error ... Address not complete", err(errors));
             return new ResponseEntity<>(errResponse, HttpStatus.BAD_REQUEST);
         }
-        var address = addressService.saveAddress(userid, addressDto.getCompleteAddress(),
-                addressDto.getPhoneNumber(), addressDto.getPostalCode());
+        var address = addressService.saveAddress(userid, Address.From(addressDto));
         Map<String, Object> response = new HashMap<>();
         response.put("User address successfully added", AddressResponseDto.From(address));
         return new ResponseEntity<>(response, HttpStatus.OK);

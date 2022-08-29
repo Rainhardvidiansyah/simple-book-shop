@@ -19,17 +19,11 @@ public class UserAddressService {
         return newPhoneNumber;
     }
 
-    public Address saveAddress(Long user_id, String completeAddress, String phoneNumber, String postalCode ){
+    public Address saveAddress(Long user_id, Address address){
         var user = userRepo.findById(user_id)
                 .orElseThrow(RuntimeException::new);
-        Address address = new Address();
-        if(address.getUser() != null){
-            address.setCompleteAddress(completeAddress);
-            address.setPhoneNumber(phoneNumber);
-            address.setPostalCode(postalCode);
-            address.setUser(user);
-            user.setAddress(address);
-        }
+        address.setUser(user);
+        address.setPhoneNumber(newPhoneWithIndonesiaCode(address.getPhoneNumber()));
         return addressRepo.save(address);
     }
 
