@@ -1,4 +1,4 @@
-package com.auth.jwt.repository;
+package com.auth.jwt.dto.utils.repository;
 
 import com.auth.jwt.user.ERole;
 import com.auth.jwt.user.Role;

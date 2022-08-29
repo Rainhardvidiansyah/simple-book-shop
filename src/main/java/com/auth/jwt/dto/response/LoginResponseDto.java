@@ -13,10 +13,12 @@ public class LoginResponseDto {
 
     private String email;
     private String jwtToken;
+    private String refreshToken;
     private List<String> roles;
 
-    public static LoginResponseDto userData(String email, String jwtToken, List<String> roles){
-        return new LoginResponseDto(email, jwtToken, roles);
+    public static LoginResponseDto userData(String email, String jwtToken,
+                                            String refreshToken, List<String> roles){
+        return new LoginResponseDto(email, jwtToken, refreshToken, roles);
     }
 
 

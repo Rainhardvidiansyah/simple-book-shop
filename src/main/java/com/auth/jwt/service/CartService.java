@@ -3,9 +3,9 @@ package com.auth.jwt.service;
 import com.auth.jwt.dto.response.CartResponse;
 import com.auth.jwt.dto.response.CartResponseForUser;
 import com.auth.jwt.model.Cart;
-import com.auth.jwt.repository.BooksRepo;
-import com.auth.jwt.repository.CartRepo;
-import com.auth.jwt.repository.UserRepo;
+import com.auth.jwt.dto.utils.repository.BooksRepo;
+import com.auth.jwt.dto.utils.repository.CartRepo;
+import com.auth.jwt.dto.utils.repository.UserRepo;
 import com.auth.jwt.user.AppUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service

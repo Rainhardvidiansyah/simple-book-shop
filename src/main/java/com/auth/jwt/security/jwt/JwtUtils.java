@@ -16,23 +16,38 @@ public class JwtUtils {
     @Value("$(app.jwt.secret)")
     private String secret;
 
+//    @Value("$(app.jwtExpiration)")
+//    private int expirations;
 
-//    @Value("$()")
-//    private int expiration;
+//    @Value("$(app.jwtRefreshExpiration)")
+//    private int refreshTokenExpiration;
 
 
-    public String createToken(Authentication authentication){
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        String jwt = Jwts.builder()
-                .setSubject(userDetails.getUsername())
-                .setIssuedAt(new Date())
-                .setExpiration(new Date((new Date()).getTime() + 172800000))
-                .signWith(SignatureAlgorithm.HS512, secret)
-                .compact();
-        return jwt;
 
+    public String generateToken(UserDetailsImpl userDetails){
+        return generateTokenFromUsername(userDetails.getUsername());
     }
 
+    public String generateTokenFromUsername(String username) {
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date((new Date()).getTime() + 86400000))
+                .signWith(SignatureAlgorithm.HS512, secret)
+                .compact();
+    }
+
+
+//    public String createToken(Authentication authentication){
+//        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+//        String jwt = Jwts.builder()
+//                .setSubject(userDetails.getUsername())
+//                .setIssuedAt(new Date())
+//                .setExpiration(new Date((new Date()).getTime() + refreshTokenExpiration))
+//                .signWith(SignatureAlgorithm.HS512, secret)
+//                .compact();
+//        return jwt;
+//    }
 
     public boolean validateJwtToken(String token) {
         try {
@@ -53,6 +68,9 @@ public class JwtUtils {
     }
 
     public String getEmailFromJwtToken(String jwt) {
-        return Jwts.parser().setSigningKey(secret).parseClaimsJws(jwt).getBody().getSubject();
+        return Jwts.parser()
+                .setSigningKey(secret)
+                .parseClaimsJws(jwt)
+                .getBody().getSubject();
     }
 }

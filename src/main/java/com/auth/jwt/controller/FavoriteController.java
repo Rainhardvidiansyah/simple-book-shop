@@ -4,8 +4,8 @@ import com.auth.jwt.dto.request.FavoriteRequestDto;
 import com.auth.jwt.dto.response.FavoriteResponse;
 import com.auth.jwt.dto.response.FavoriteResponseInJoin;
 import com.auth.jwt.model.Favorite;
-import com.auth.jwt.repository.BooksRepo;
-import com.auth.jwt.repository.UserRepo;
+import com.auth.jwt.dto.utils.repository.BooksRepo;
+import com.auth.jwt.dto.utils.repository.UserRepo;
 import com.auth.jwt.service.FavoriteService;
 import com.auth.jwt.user.AppUser;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/favorite")

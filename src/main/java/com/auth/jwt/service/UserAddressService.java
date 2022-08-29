@@ -2,8 +2,8 @@ package com.auth.jwt.service;
 
 
 import com.auth.jwt.model.Address;
-import com.auth.jwt.repository.AddressRepo;
-import com.auth.jwt.repository.UserRepo;
+import com.auth.jwt.dto.utils.repository.AddressRepo;
+import com.auth.jwt.dto.utils.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

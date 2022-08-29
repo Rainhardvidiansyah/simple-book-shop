@@ -4,9 +4,9 @@ package com.auth.jwt.service;
 import com.auth.jwt.model.Book;
 import com.auth.jwt.model.BookImage;
 
-import com.auth.jwt.repository.BookImageRepo;
-import com.auth.jwt.repository.BooksRepo;
-import com.auth.jwt.repository.CategoryRepo;
+import com.auth.jwt.dto.utils.repository.BookImageRepo;
+import com.auth.jwt.dto.utils.repository.BooksRepo;
+import com.auth.jwt.dto.utils.repository.CategoryRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;

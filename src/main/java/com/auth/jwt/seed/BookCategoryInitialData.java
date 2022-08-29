@@ -1,10 +1,7 @@
 package com.auth.jwt.seed;
 
 import com.auth.jwt.model.Book;
-import com.auth.jwt.model.Category;
-import com.auth.jwt.model.ECategory;
-import com.auth.jwt.repository.BooksRepo;
-import com.auth.jwt.repository.CategoryRepo;
+import com.auth.jwt.dto.utils.repository.BooksRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;

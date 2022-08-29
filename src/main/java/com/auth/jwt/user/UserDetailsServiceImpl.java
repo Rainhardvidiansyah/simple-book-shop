@@ -1,6 +1,6 @@
 package com.auth.jwt.user;
 
-import com.auth.jwt.repository.UserRepo;
+import com.auth.jwt.dto.utils.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
