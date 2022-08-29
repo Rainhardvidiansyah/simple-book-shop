@@ -5,6 +5,7 @@ import com.auth.jwt.dto.response.CartResponseForUser;
 import com.auth.jwt.model.Cart;
 import com.auth.jwt.repository.BooksRepo;
 import com.auth.jwt.repository.CartRepo;
+import com.auth.jwt.repository.UserRepo;
 import com.auth.jwt.user.AppUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,7 @@ import java.util.Optional;
 public class CartService {
 
     private final CartRepo cartRepo;
+    private final UserRepo userRepo;
     private final BooksRepo booksRepo;
 
     public Cart addProductToCart(Long bookId, int quantity, String note, AppUser user){
@@ -57,8 +59,10 @@ public class CartService {
     }
 
     @Transactional
-    public Cart editCart(Long cartId, int quantity, String note, AppUser user) {
+    public Cart editCart(Long cartId, int quantity, String note, Long userId) {
         Optional<Cart> cart = cartRepo.findById(cartId);
+        var user = userRepo.findById(userId).orElseThrow(
+                RuntimeException::new);
         if (cart.isEmpty()) {
             throw new RuntimeException("Cart Not Found!");
         }
@@ -79,5 +83,6 @@ public class CartService {
     private static boolean noteNotNullOrEmpty(String note){
         return !note.isEmpty();
     }
+
 
 }

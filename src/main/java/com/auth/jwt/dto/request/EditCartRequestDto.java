@@ -9,7 +9,6 @@ import lombok.Setter;
 @AllArgsConstructor @Getter @Setter
 public class EditCartRequestDto {
 
-    private Long cartId;
     private int quantity;
     private String note;
 

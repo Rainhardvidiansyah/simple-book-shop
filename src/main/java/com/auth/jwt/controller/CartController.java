@@ -43,7 +43,7 @@ public class CartController {
         log.info("Book id: {}", cartDto.getBookId());
         log.info("Note: {}", cartDto.getNote());
         log.info("User: {}", user);
-        return new ResponseEntity<>(savedCart, HttpStatus.OK);
+        return new ResponseEntity<>("Product has been add to your cart", HttpStatus.OK);
     }
 
     private static boolean isNotNull(List<CartResponse> cartResponses){
@@ -76,15 +76,16 @@ public class CartController {
 
     @PutMapping("/update")
     @ResponseBody
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole ('ROLE_USER')")
-    public ResponseEntity<?> editCart(@RequestParam Long cart_id, @RequestBody EditCartRequestDto editDto){
+    @PreAuthorize("#userid == principal.id or hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> editCart(@RequestParam(required = true) Long userid, @RequestParam(required = true) Long cart_id,
+                                      @RequestBody EditCartRequestDto editDto){
         var email = servletRequest.getUserPrincipal().getName();
         var user = userRepo.findAppUserByEmail(email)
                 .orElseThrow(RuntimeException::new);
         if(editDto.getQuantity() == 0){
             return new ResponseEntity<>("Cart cannot be empty!", HttpStatus.BAD_REQUEST);
         }
-        Cart savedCart = cartService.editCart(cart_id, editDto.getQuantity(), editDto.getNote(), user);
+        Cart savedCart = cartService.editCart(cart_id, editDto.getQuantity(), editDto.getNote(), userid);
         var response = new CartResponse(savedCart);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

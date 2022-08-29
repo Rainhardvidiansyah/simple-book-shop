@@ -22,8 +22,6 @@ public class Cart {
 
     private Double totalPrice;
 
-    private Double totalCost;
-
     private String note;
 
     @ManyToOne
