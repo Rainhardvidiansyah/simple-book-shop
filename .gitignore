@@ -37,3 +37,4 @@ src/main/java/com/auth/jwt/controller/UserController.java
 /src/main/java/com/auth/jwt/dto/request/ApiShippingDto.java
 /src/main/java/com/auth/jwt/service/OutsiderApiService.java
 /src/main/java/com/auth/jwt/dto/utils/RestClient.java
+/src/test/java/com/auth/jwt/service/BooksServiceTest.java
