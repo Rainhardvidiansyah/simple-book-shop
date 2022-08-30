@@ -70,8 +70,9 @@ public class BooksService {
     }
 
     public Book updateBook(Long id, Book book){
-        Book updateBook = booksRepo.findById(id)
-                        .orElseThrow(() -> new RuntimeException(String.format("Book with %d not found", id)));
+        Book updateBook
+                = booksRepo.findById(id)
+                        .orElseThrow(() -> new RuntimeException(String.format("Book with id %d not found", id)));
         updateBook.setTitle(book.getTitle());
         updateBook.setAuthor(book.getAuthor());
         updateBook.setSynopsis(book.getSynopsis());
