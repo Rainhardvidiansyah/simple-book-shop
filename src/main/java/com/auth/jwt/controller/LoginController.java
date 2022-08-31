@@ -12,6 +12,7 @@ import com.auth.jwt.security.jwt.RefreshToken;
 import com.auth.jwt.service.AppUserService;
 import com.auth.jwt.service.RefreshTokenService;
 import com.auth.jwt.user.UserDetailsImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +30,8 @@ import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
-@RequestMapping("api/v1/user")
+@RequestMapping("/api/v1/user")
+@Slf4j
 public class LoginController {
 
     private final AuthenticationManager authenticationManager;
@@ -66,6 +68,7 @@ public class LoginController {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
         var refreshToken = refreshTokenService.refreshToken(userDetails.getId());
+        log.info("User logged in-> id {}, email: {}", userDetails.getId(), userDetails.getUsername());
         return new ResponseEntity<>(LoginResponseDto.userData(userDetails.getUsername(), jwt, refreshToken.getToken(), roles),
                 HttpStatus.OK);
     }
