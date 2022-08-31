@@ -52,6 +52,15 @@
 		</dependency>
 		<!--End of Swagger Dependency-->
 
+		<!--Start of Stripe Dependency-->
+		<!-- https://mvnrepository.com/artifact/com.stripe/stripe-java -->
+		<dependency>
+			<groupId>com.stripe</groupId>
+			<artifactId>stripe-java</artifactId>
+			<version>21.4.0</version>
+		</dependency>
+		<!--End of Stripe Dependency-->
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
