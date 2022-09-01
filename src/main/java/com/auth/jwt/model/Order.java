@@ -29,9 +29,7 @@ public class Order {
     @Column(name = "session_id")
     private String sessionId;
 
-
-//     fetch = FetchType.LAZY
-//    cascade = CascadeType.ALL
+    private String payment_method;
 
     @OneToMany(mappedBy = "order")
     private List<OrderItem> orderItems;

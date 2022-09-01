@@ -61,6 +61,14 @@
 		</dependency>
 		<!--End of Stripe Dependency-->
 
+
+		<!--Start of java Dependency-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+		<!--End of Java Mail Dependency-->
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>

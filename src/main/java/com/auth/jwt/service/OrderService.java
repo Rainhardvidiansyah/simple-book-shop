@@ -29,7 +29,7 @@ public class OrderService {
     private final CartService cartService;
     private final UserRepo userRepo;
 
-    public Order makeAnOrder(Long userId){
+    public Order makeAnOrder(Long userId, String paymentMethod){
         var user = userRepo.findById(userId)
                 .orElseThrow(() -> new RuntimeException());
 
@@ -39,7 +39,11 @@ public class OrderService {
         var order = new Order();
         order.setCreatedDate(new Date());
         //order.setSessionId(sessionId);
+        order.setPayment_method(paymentMethod);
         order.setUser(user);
+        if(user != order.getUser()){
+            throw new RuntimeException("This is not your order!");
+        }
         order.setTotalPrice(cartResponseForUser.getTotalCost());
 
         List<OrderItem> listOfOrderItem = new ArrayList<>();
@@ -59,41 +63,12 @@ public class OrderService {
     }
 
 
+    public List<Order> listOrders(AppUser user) {
+        return orderRepo.findAllByUserOrderByCreatedDateDesc(user);
+    }
+
+
     /*
-     public void placeOrder(User user, String sessionId) {
-        // first let get cart items for the user
-        CartDto cartDto = cartService.listCartItems(user);
-
-        List<CartItemDto> cartItemDtoList = cartDto.getcartItems();
-
-        // create the order and save it
-        Order newOrder = new Order();
-        newOrder.setCreatedDate(new Date());
-        newOrder.setSessionId(sessionId);
-        newOrder.setUser(user);
-        newOrder.setTotalPrice(cartDto.getTotalCost());
-        orderRepository.save(newOrder);
-
-        for (CartItemDto cartItemDto : cartItemDtoList) {
-            // create orderItem and save each one
-            OrderItem orderItem = new OrderItem();
-            orderItem.setCreatedDate(new Date());
-            orderItem.setPrice(cartItemDto.getProduct().getPrice());
-            orderItem.setProduct(cartItemDto.getProduct());
-            orderItem.setQuantity(cartItemDto.getQuantity());
-            orderItem.setOrder(newOrder);
-            // add to order item list
-            orderItemsRepository.save(orderItem);
-        }
-        //
-        cartService.deleteUserCartItems(user);
-    }
-
-    public List<Order> listOrders(User user) {
-        return orderRepository.findAllByUserOrderByCreatedDateDesc(user);
-    }
-
-
     public Order getOrder(Integer orderId) throws OrderNotFoundException {
         Optional<Order> order = orderRepository.findById(orderId);
         if (order.isPresent()) {
