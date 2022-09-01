@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class OrderService {
+public class StripeService {
 
     @Value("${stripe.secret.key}")
     private String apiKey;

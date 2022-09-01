@@ -83,5 +83,9 @@ public class CartService {
         return !note.isEmpty();
     }
 
+    public void deleteUser(AppUser user){
+        cartRepo.deleteCartByUser(user);
+    }
+
 
 }
