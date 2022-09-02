@@ -3,6 +3,7 @@ package com.auth.jwt.user;
 import com.auth.jwt.dto.request.RegistrationRequest;
 import com.auth.jwt.dto.request.UpdateProfileDto;
 import com.auth.jwt.model.Address;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
@@ -33,7 +34,8 @@ public class AppUser {
     )
     private List<Role> roles = new ArrayList<>();
 
-    @JsonManagedReference
+//    @JsonManagedReference
+    @JsonBackReference
     @OneToOne(mappedBy = "user")
     private Address address;
 

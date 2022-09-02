@@ -41,6 +41,10 @@ public class Order {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private AppUser user;
 
+    @OneToOne
+    @JoinColumn(name = "address_id", referencedColumnName = "id")
+    private Address address;
+
 
 
 }

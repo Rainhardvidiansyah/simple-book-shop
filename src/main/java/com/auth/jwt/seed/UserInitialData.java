@@ -1,10 +1,13 @@
 package com.auth.jwt.seed;
 
+import com.auth.jwt.model.Address;
+import com.auth.jwt.repository.AddressRepo;
 import com.auth.jwt.repository.RoleRepo;
 import com.auth.jwt.repository.UserRepo;
 import com.auth.jwt.user.AppUser;
 import com.auth.jwt.user.ERole;
 import com.auth.jwt.user.Role;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -17,18 +20,14 @@ import java.util.List;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class UserInitialData implements ApplicationListener<ContextRefreshedEvent> {
 
     private final UserRepo userRepo;
     private final RoleRepo roleRepo;
+    private final AddressRepo addressRepo;
     private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    public UserInitialData(UserRepo userRepo, RoleRepo roleRepo, PasswordEncoder passwordEncoder) {
-        this.userRepo = userRepo;
-        this.roleRepo = roleRepo;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
@@ -57,8 +56,20 @@ public class UserInitialData implements ApplicationListener<ContextRefreshedEven
         List<Role> rolesUser2 = new ArrayList<>();
         rolesUser2.add(userRole);
         user2.setRoles(rolesUser2);
+
+
+        var address = new Address();
+        address.setCompleteAddress("Jalan Delima no 14. Kota Jakarta, DKI.");
+        address.setPhoneNumber("081210203345");
+        address.setPostalCode("101010");
+
+        address.setUser(user2);
+//        user2.setAddress(address);
+
+        addressRepo.save(address);
         var savedUser2 = userRepo.save(user2);
         log.info("Saved user 2: {}", savedUser2);
+        log.error("err: {}", address);
 
     }
 }

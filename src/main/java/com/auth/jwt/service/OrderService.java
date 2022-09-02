@@ -39,12 +39,13 @@ public class OrderService {
 
         CartResponseForUser cartResponseForUser = cartService.joinCartAndUser(user);
         List<CartResponse> cartResponses = cartResponseForUser.getCartResponses();
-
         var order = new Order();
         order.setCreatedDate(new Date());
         //order.setSessionId(sessionId);
         order.setPayment_method(paymentMethod);
+        order.setOrdered(false);
         order.setUser(user);
+        order.setAddress(user.getAddress());
         if(user != order.getUser()){
             throw new RuntimeException("This is not your order!");
         }
@@ -66,6 +67,15 @@ public class OrderService {
     }
 
 
+
+
+
+    //ToDo: Make a method to send email to user that they haven't paid the orders
+
+    //ToDo: all orders that have been paid by the user! Send them an email status, and products are ready to ship!
+
+
+
     public List<Order> listOrders(AppUser user) {
         return orderRepo.findAllByUserOrderByCreatedDateDesc(user);
     }
@@ -82,6 +92,7 @@ public class OrderService {
         }
         throw new OrderNotFoundException("Product not Found!");
     }
+
 
 
 
