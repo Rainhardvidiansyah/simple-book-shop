@@ -29,6 +29,8 @@ public class Order {
     @Column(name = "session_id")
     private String sessionId;
 
+    private boolean ordered;
+
     private String payment_method;
 
     @OneToMany(mappedBy = "order")

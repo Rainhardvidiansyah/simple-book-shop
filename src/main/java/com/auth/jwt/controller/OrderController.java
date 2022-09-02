@@ -34,11 +34,20 @@ public class OrderController {
             return new ResponseEntity<>("Data not valid", HttpStatus.BAD_REQUEST);
         }
         Order order = orderService.makeAnOrder(userid, orderRequestDto.getPaymentMethod());
-        return new ResponseEntity<>(test(order.getId(), String.valueOf(order.getTotalPrice()) ,order.getPayment_method()),
-                HttpStatus.OK).getBody();
+        return new ResponseEntity<>(headerResponses(order.getId(), String.valueOf(order.getTotalPrice()) ,order.getPayment_method()),
+                HttpStatus.OK);
     }
 
-    private ResponseEntity<?> test(String number_order, String totalCost, String payment_method){
+    @GetMapping("/user")
+    @ResponseBody
+    @PreAuthorize("#userid == principal.id or hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> getOrder(@RequestParam Long userid){
+        var order = orderService.getOrder(userid);
+        return new ResponseEntity<>(headerResponses(order.getId(), String.valueOf(order.getTotalPrice()),
+                order.getPayment_method()), HttpStatus.OK);
+    }
+
+    private ResponseEntity<?> headerResponses(String number_order, String totalCost, String payment_method){
         HttpHeaders headers = new HttpHeaders();
         headers.add("Order number:", number_order);
         headers.add("Total Cost:", totalCost);

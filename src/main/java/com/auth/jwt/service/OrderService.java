@@ -1,6 +1,8 @@
 package com.auth.jwt.service;
 
+import com.auth.jwt.dto.exception.OrderNotFoundException;
 import com.auth.jwt.dto.request.CartRequestDto;
+import com.auth.jwt.dto.request.EmailRequestOrderDto;
 import com.auth.jwt.dto.response.CartResponse;
 import com.auth.jwt.dto.response.CartResponseForUser;
 import com.auth.jwt.model.Cart;
@@ -29,6 +31,8 @@ public class OrderService {
     private final CartService cartService;
     private final UserRepo userRepo;
 
+    private final EmailService emailService;
+
     public Order makeAnOrder(Long userId, String paymentMethod){
         var user = userRepo.findById(userId)
                 .orElseThrow(() -> new RuntimeException());
@@ -55,7 +59,6 @@ public class OrderService {
             orderItem.setPrice(cartResponseForUser.getTotalCost());
             orderItem.setBook(cartResponse.getBook());
             orderItem.setQuantity(cartResponse.getQuantity());
-
             orderItem.setOrder(order);
             orderItemService.addOrderedProducts(orderItem);
         }
@@ -67,15 +70,29 @@ public class OrderService {
         return orderRepo.findAllByUserOrderByCreatedDateDesc(user);
     }
 
-
-    /*
-    public Order getOrder(Integer orderId) throws OrderNotFoundException {
-        Optional<Order> order = orderRepository.findById(orderId);
-        if (order.isPresent()) {
-            return order.get();
+    public Order getOrder(Long userId) throws OrderNotFoundException {
+        var user = userRepo.findById(userId)
+                .orElseThrow(RuntimeException::new);
+        var order = orderRepo.findOrderByUser(user);
+        if(order != null){
+            emailService.sendOrderDataToUser(EmailRequestOrderDto.From(order,
+                    order.getUser().getEmail(), "Admin"
+            ));
+            return order;
         }
-        throw new OrderNotFoundException("Order not found");
+        throw new OrderNotFoundException("Product not Found!");
     }
-     */
+
+
 
 }
+    //public Order getOrder(String orderId) throws OrderNotFoundException {
+//        Optional<Order> order = orderRepo.findById(orderId);
+//        if (order.isPresent()) {
+//            return order.get();
+//        }
+//        emailService.sendOrderDataToUser(EmailRequestOrderDto.From(order.get(),
+//                order.get().getUser().getEmail(), "Admin"
+//        ));
+//        throw new OrderNotFoundException("Product not Found!");
+//    }

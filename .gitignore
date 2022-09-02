@@ -40,3 +40,4 @@ src/main/java/com/auth/jwt/controller/UserController.java
 /src/test/java/com/auth/jwt/service/BooksServiceTest.java
 /src/test/java/com/auth/jwt/service/OrderServiceTest.java
 /src/main/java/com/auth/jwt/dto/response/OrderItemResponseDto.java
+/src/main/java/com/auth/jwt/service/IEmailService.java
