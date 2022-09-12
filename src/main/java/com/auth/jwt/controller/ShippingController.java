@@ -10,16 +10,21 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/api/v1/shipping")
@@ -27,6 +32,7 @@ import java.util.stream.Collectors;
 public class ShippingController {
 
     private static final String api_key = "cc4b19f3765051144c33953f64278067";
+    private static final String costUrl = "https://api.rajaongkir.com/starter/cost";
     private static final String baseUrl = "https://api.rajaongkir.com/starter/province";
     private static final String baseUrl2 = "https://api.rajaongkir.com/starter/city?city_id=";
     private final RestTemplate restTemplate;
@@ -115,5 +121,31 @@ public class ShippingController {
                 .collect(Collectors.toList());
         Gson gson = new Gson();
         return new ResponseEntity<>(gson.toJson(cityList), HttpStatus.OK);
+    }
+
+    @PostMapping("/check")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+    public ResponseEntity<?> costApi(@org.springframework.web.bind.annotation.RequestBody CostBody cost) throws IOException {
+
+        OkHttpClient client = new OkHttpClient().newBuilder()
+                .connectTimeout(5, TimeUnit.SECONDS)
+                .writeTimeout(5, TimeUnit.SECONDS)
+                .readTimeout(5, TimeUnit.SECONDS)
+                .build();
+        okhttp3.MediaType mediaType = okhttp3.MediaType.parse("application/x-www-form-urlencoded");
+        String dataInput = "origin=23&destination="+cost.getDestination_Id()+"&weight="+cost.getWeight()+"&courier="+cost.getCourier();
+        okhttp3.RequestBody body = okhttp3.RequestBody.create(mediaType, dataInput);
+        Request request = new Request.Builder()
+                .url(costUrl)
+                .post(body)
+                .addHeader("key", api_key)
+                .addHeader("content-type", "application/x-www-form-urlencoded")
+                .build();
+        Response response = client.newCall(request).execute();
+//        Gson gson = new Gson();
+//        gson.fromJson(response.body().string(), CostDataMaster.class);
+        String res = response.body().string();
+        return new ResponseEntity<>(res, HttpStatus.CREATED);
+
     }
 }
