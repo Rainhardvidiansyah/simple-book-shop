@@ -22,10 +22,5 @@ public class RajaOngkir {
     @JsonIgnore
     private Status status;
 
-//    private OriginDetails originDetails;
-//
-//    private DestinationDetails destinationDetails;
-
-    //jangan lupa diganti lagi dengan Results, tanpa List<E>
     private List<Results> results = new ArrayList<>();
 }

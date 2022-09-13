@@ -1,4 +1,4 @@
-package com.auth.jwt.dto;
+package com.auth.jwt.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
