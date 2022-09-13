@@ -1,6 +1,7 @@
 package com.auth.jwt.model;
 
 import com.auth.jwt.dto.request.BooksDtoRequest;
+import com.auth.jwt.helper.BaseAuditing;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
@@ -10,7 +11,8 @@ import java.util.*;
 @Entity
 @AllArgsConstructor @NoArgsConstructor
 @Getter @Setter @Builder @ToString
-public class Book {
+public class Book  extends BaseAuditing<String> {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
