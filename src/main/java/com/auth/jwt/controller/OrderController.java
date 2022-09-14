@@ -1,6 +1,7 @@
 package com.auth.jwt.controller;
 
 import com.auth.jwt.dto.request.OrderRequestDto;
+import com.auth.jwt.dto.response.OrderReceiptResponseDto;
 import com.auth.jwt.dto.utils.ErrorUtils;
 import com.auth.jwt.model.Order;
 import com.auth.jwt.service.OrderService;
@@ -14,6 +15,8 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @RestController
@@ -27,6 +30,12 @@ public class OrderController {
     @PostMapping("/create")
     @PreAuthorize("#userid == principal.id or hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> order(@RequestParam Long userid, @Valid @RequestBody OrderRequestDto orderRequestDto, Errors errors){
+        //ToDo: Make this validation in validator utils
+        if(!orderRequestDto.getPaymentMethod().equalsIgnoreCase("ovo") &&
+                !orderRequestDto.getPaymentMethod().equalsIgnoreCase("BCA") &&
+                !orderRequestDto.getPaymentMethod().equalsIgnoreCase("BRI")){
+            return new ResponseEntity<>("Only three payment methods available: OVO, BRI, BCA", HttpStatus.BAD_REQUEST);
+        }
         if(errors.hasErrors()){
             return new ResponseEntity<>(ErrorUtils.err(errors), HttpStatus.BAD_REQUEST);
         }
@@ -34,8 +43,9 @@ public class OrderController {
             return new ResponseEntity<>("Data not valid", HttpStatus.BAD_REQUEST);
         }
         Order order = orderService.makeAnOrder(userid, orderRequestDto.getPaymentMethod());
-        return new ResponseEntity<>(headerResponses(order.getId(), String.valueOf(order.getTotalPrice()) ,order.getPayment_method()),
-                HttpStatus.OK);
+        Map<String, Object> maps = new HashMap<>();
+        maps.put("Invoice", OrderReceiptResponseDto.From(order));
+        return new ResponseEntity<>(maps, HttpStatus.OK);
     }
 
     @GetMapping("/user")
@@ -43,8 +53,7 @@ public class OrderController {
     @PreAuthorize("#userid == principal.id or hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> getOrder(@RequestParam Long userid){
         var order = orderService.getOrder(userid);
-        return new ResponseEntity<>(headerResponses(order.getId(), String.valueOf(order.getTotalPrice()),
-                order.getPayment_method()), HttpStatus.OK);
+        return new ResponseEntity<>(OrderReceiptResponseDto.From(order), HttpStatus.OK);
     }
 
     private ResponseEntity<?> headerResponses(String number_order, String totalCost, String payment_method){
@@ -54,6 +63,7 @@ public class OrderController {
         headers.add("Payment Method: ", payment_method);
         return new ResponseEntity<>(headers, HttpStatus.OK);
     }
+
     private static boolean isUserIdValid(Long userId){
         return !userId.equals("") && userId==null;
     }

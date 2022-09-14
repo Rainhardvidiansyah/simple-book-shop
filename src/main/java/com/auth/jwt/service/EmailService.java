@@ -2,11 +2,11 @@ package com.auth.jwt.service;
 
 import com.auth.jwt.dto.request.EmailDetailsRequestDto;
 import com.auth.jwt.dto.request.EmailRequestOrderDto;
+import com.auth.jwt.user.AppUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMailMessage;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +14,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.File;
 import java.util.Date;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -71,6 +72,39 @@ public class EmailService {
         javaMailSender.send(simpleMailMessage);
         return "Email sent";
     }
+
+
+    public String sendOrderReceipt(String order_id, List<String> book_names, AppUser user, Double totalPrice, String paymentMethod){
+        String userName = user.getFullName();
+        String payment = paymentResponse(paymentMethod);
+        var simpleMailMessage = new SimpleMailMessage();
+        try {
+            simpleMailMessage.setFrom("BookShop@gmail.com");
+            simpleMailMessage.setTo(user.getEmail());
+            simpleMailMessage.setText(
+                    "Hi " + userName + ", your order with number " + order_id + " has been made."+
+                            " Price you have to pay is " + totalPrice + ". Your order is: " + book_names + ". "
+                            + payment);
+            simpleMailMessage.setSentDate(new Date());
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        javaMailSender.send(simpleMailMessage);
+        return "Email sent to: " + userName;
+    }
+
+    private String paymentResponse(String paymentMethod){
+        if(paymentMethod.equals("ovo")){
+            return "You need to transfer to 0812121212 (OVO)";
+        } else if(paymentMethod.equals("BRI")){
+            return "You need to transfer to 3222-1229-222-44-444 (BRI)";
+        } else if(paymentMethod.equals("BCA")) {
+            return "You need to transfer to 3333-333-123 (BCA)";
+        }else{
+            return "another payment method is not available";
+        }
+    }
+
 
 
 

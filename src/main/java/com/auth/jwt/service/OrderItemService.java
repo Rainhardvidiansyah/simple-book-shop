@@ -13,8 +13,8 @@ public class OrderItemService {
 
     private final OrderItemRepo orderItemRepo;
 
-    public void addOrderedProducts(OrderItem orderItem) {
-        orderItemRepo.save(orderItem);
+    public OrderItem addOrderedProducts(OrderItem orderItem) {
+        return orderItemRepo.save(orderItem);
     }
 
 }

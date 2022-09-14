@@ -1,14 +1,11 @@
 package com.auth.jwt.service;
 
 import com.auth.jwt.dto.exception.OrderNotFoundException;
-import com.auth.jwt.dto.request.CartRequestDto;
 import com.auth.jwt.dto.request.EmailRequestOrderDto;
 import com.auth.jwt.dto.response.CartResponse;
 import com.auth.jwt.dto.response.CartResponseForUser;
-import com.auth.jwt.model.Cart;
 import com.auth.jwt.model.Order;
 import com.auth.jwt.model.OrderItem;
-import com.auth.jwt.repository.CartRepo;
 import com.auth.jwt.repository.OrderRepo;
 import com.auth.jwt.repository.UserRepo;
 import com.auth.jwt.user.AppUser;
@@ -16,10 +13,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +31,7 @@ public class OrderService {
 
     private final EmailService emailService;
 
+    @Transactional
     public Order makeAnOrder(Long userId, String paymentMethod){
         var user = userRepo.findById(userId)
                 .orElseThrow(() -> new RuntimeException());
@@ -50,10 +49,8 @@ public class OrderService {
             throw new RuntimeException("This is not your order!");
         }
         order.setTotalPrice(cartResponseForUser.getTotalCost());
-
         List<OrderItem> listOfOrderItem = new ArrayList<>();
         order.setOrderItems(listOfOrderItem);
-
         for(CartResponse cartResponse : cartResponses){
             var orderItem = new OrderItem();
             orderItem.setCreatedDate(new Date());
@@ -61,14 +58,17 @@ public class OrderService {
             orderItem.setBook(cartResponse.getBook());
             orderItem.setQuantity(cartResponse.getQuantity());
             orderItem.setOrder(order);
-            orderItemService.addOrderedProducts(orderItem);
+            OrderItem savedOrderItem = orderItemService.addOrderedProducts(orderItem);
+            listOfOrderItem.add(savedOrderItem);
         }
+        List<String> book_collection = order.getOrderItems()
+                .stream().map(a -> a.getBook().getTitle())
+                .collect(Collectors.toList());
+        String sendEmail = emailService.sendOrderReceipt(order.getId(), book_collection,
+                order.getUser(), order.getTotalPrice(), order.getPayment_method());
+        log.info("Email sent {}", sendEmail);
         return orderRepo.save(order);
     }
-
-
-
-
 
     //ToDo: Make a method to send email to user that they haven't paid the orders
 
@@ -97,13 +97,3 @@ public class OrderService {
 
 
 }
-    //public Order getOrder(String orderId) throws OrderNotFoundException {
-//        Optional<Order> order = orderRepo.findById(orderId);
-//        if (order.isPresent()) {
-//            return order.get();
-//        }
-//        emailService.sendOrderDataToUser(EmailRequestOrderDto.From(order.get(),
-//                order.get().getUser().getEmail(), "Admin"
-//        ));
-//        throw new OrderNotFoundException("Product not Found!");
-//    }
