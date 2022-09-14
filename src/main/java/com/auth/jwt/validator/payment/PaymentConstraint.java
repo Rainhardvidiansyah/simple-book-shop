@@ -10,8 +10,15 @@ public class PaymentConstraint implements ConstraintValidator<PaymentMethodAnnot
     @Override
     public boolean isValid(Object o, ConstraintValidatorContext constraintValidatorContext) {
         var orderRequest = (OrderRequestDto) o;
-        return orderRequest.getPaymentMethod().equalsIgnoreCase("OVO")
-                && orderRequest.getPaymentMethod().equalsIgnoreCase("BRI")
-                && orderRequest.getPaymentMethod().equalsIgnoreCase("BCA");
+
+        if(orderRequest.getPaymentMethod().equalsIgnoreCase("ovo")){
+            return true;
+        } else if(orderRequest.getPaymentMethod().equalsIgnoreCase("bri")) {
+            return true;
+        } else if(orderRequest.getPaymentMethod().equalsIgnoreCase("bca")) {
+            return true;
+        }else {
+            return false;
+        }
     }
 }

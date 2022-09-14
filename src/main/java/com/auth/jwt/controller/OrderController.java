@@ -30,12 +30,6 @@ public class OrderController {
     @PostMapping("/create")
     @PreAuthorize("#userid == principal.id or hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> order(@RequestParam Long userid, @Valid @RequestBody OrderRequestDto orderRequestDto, Errors errors){
-        //ToDo: Make this validation in validator utils
-        if(!orderRequestDto.getPaymentMethod().equalsIgnoreCase("ovo") &&
-                !orderRequestDto.getPaymentMethod().equalsIgnoreCase("BCA") &&
-                !orderRequestDto.getPaymentMethod().equalsIgnoreCase("BRI")){
-            return new ResponseEntity<>("Only three payment methods available: OVO, BRI, BCA", HttpStatus.BAD_REQUEST);
-        }
         if(errors.hasErrors()){
             return new ResponseEntity<>(ErrorUtils.err(errors), HttpStatus.BAD_REQUEST);
         }
