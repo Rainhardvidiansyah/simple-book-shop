@@ -31,8 +31,6 @@ public class Order {
 
     private boolean ordered;
 
-    private String payment_method;
-
     @OneToMany(mappedBy = "order")
     private List<OrderItem> orderItems;
 
@@ -44,6 +42,10 @@ public class Order {
     @OneToOne
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address address;
+
+    @OneToOne
+    @JoinColumn(name = "transaction_id", referencedColumnName = "id")
+    private Transaction transaction;
 
 
 

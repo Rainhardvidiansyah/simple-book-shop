@@ -17,6 +17,7 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,7 +42,6 @@ public class OrderService {
         var order = new Order();
         order.setCreatedDate(new Date());
         //order.setSessionId(sessionId);
-        order.setPayment_method(paymentMethod);
         order.setOrdered(false);
         order.setUser(user);
         order.setAddress(user.getAddress());
@@ -65,7 +65,7 @@ public class OrderService {
                 .stream().map(a -> a.getBook().getTitle())
                 .collect(Collectors.toList());
         String sendEmail = emailService.sendOrderReceipt(order.getId(), book_collection,
-                order.getUser(), order.getTotalPrice(), order.getPayment_method());
+                order.getUser(), order.getTotalPrice(), paymentMethod);
         log.info("Email sent {}", sendEmail);
         return orderRepo.save(order);
     }
@@ -92,6 +92,15 @@ public class OrderService {
         }
         throw new OrderNotFoundException("Product not Found!");
     }
+
+    public Order findOrderId(String id){
+        var order = orderRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Number order not Found!"));
+        return order;
+    }
+
+    //ToDo: set ordered to by Admin!
+
 
 
 

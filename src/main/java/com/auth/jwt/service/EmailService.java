@@ -94,11 +94,11 @@ public class EmailService {
     }
 
     private String paymentResponse(String paymentMethod){
-        if(paymentMethod.equals("ovo")){
+        if(paymentMethod.equalsIgnoreCase("ovo")){
             return "You need to transfer to 0812121212 (OVO)";
-        } else if(paymentMethod.equals("BRI")){
+        } else if(paymentMethod.equalsIgnoreCase("BRI")){
             return "You need to transfer to 3222-1229-222-44-444 (BRI)";
-        } else if(paymentMethod.equals("BCA")) {
+        } else if(paymentMethod.equalsIgnoreCase("BCA")) {
             return "You need to transfer to 3333-333-123 (BCA)";
         }else{
             return "another payment method is not available";
