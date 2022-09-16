@@ -34,9 +34,9 @@ build/
 
 src/main/java/com/auth/jwt/controller/UserController.java
 /src/main/java/com/auth/jwt/dto/request/ApiShippingDto.java
-/src/main/java/com/auth/jwt/service/OutsiderApiService.java
+/src/main/java/com/auth/jwt/security/service/OutsiderApiService.java
 /src/main/java/com/auth/jwt/dto/utils/RestClient.java
 /src/test/java/com/auth/jwt/service/BooksServiceTest.java
 /src/test/java/com/auth/jwt/service/OrderServiceTest.java
 /src/main/java/com/auth/jwt/dto/response/OrderItemResponseDto.java
-/src/main/java/com/auth/jwt/service/IEmailService.java
+/src/main/java/com/auth/jwt/security/service/IEmailService.java
