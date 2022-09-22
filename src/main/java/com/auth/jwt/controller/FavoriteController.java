@@ -37,7 +37,7 @@ public class FavoriteController {
         AppUser user = userRepo.findAppUserByEmail(email)
                 .orElseThrow(RuntimeException::new);
         var savedFavorite = favoriteService.createFavorite(favRequestDto.getBookId(), user);
-        log.info("Data saved: {}", savedFavorite);
+        log.info("Book saved as favorite: {}", savedFavorite.getBook().getTitle());
         return new ResponseEntity<>(new FavoriteResponse(savedFavorite.getContent(), savedFavorite.getBook().getTitle(),
                 user.getFullName()), HttpStatus.OK);
     }

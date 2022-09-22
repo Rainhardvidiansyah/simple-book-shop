@@ -30,9 +30,9 @@ import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
-@RequestMapping("/api/v1/user")
+@RequestMapping("/api/v1/auth")
 @Slf4j
-public class LoginController {
+public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
@@ -41,8 +41,8 @@ public class LoginController {
     private final AppUserService userService;
 
     @Autowired
-    public LoginController(AuthenticationManager authenticationManager,
-                           JwtUtils jwtUtils, RefreshTokenService refreshTokenService, AppUserService userService) {
+    public AuthController(AuthenticationManager authenticationManager,
+                          JwtUtils jwtUtils, RefreshTokenService refreshTokenService, AppUserService userService) {
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
         this.refreshTokenService = refreshTokenService;
