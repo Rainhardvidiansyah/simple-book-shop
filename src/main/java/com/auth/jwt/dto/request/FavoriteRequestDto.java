@@ -3,16 +3,16 @@ package com.auth.jwt.dto.request;
 
 import lombok.*;
 
-@NoArgsConstructor
+import javax.validation.constraints.NotNull;
+
+
+@NoArgsConstructor @AllArgsConstructor
 @Getter @Setter @ToString
 public class FavoriteRequestDto {
 
-    private String content;
+    @NotNull(message = "Please add your shopping items to favorites")
     private Long bookId;
+    private String content;
 
-    public FavoriteRequestDto(String content, Long bookId) {
-        this.content = content;
-        this.bookId = bookId;
-    }
 
 }

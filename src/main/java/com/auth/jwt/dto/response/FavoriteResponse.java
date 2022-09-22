@@ -11,10 +11,8 @@ import lombok.Setter;
 public class FavoriteResponse {
 
     private String content;
-
     private String bookTitle;
 
-    private String userName;
 
 
 
