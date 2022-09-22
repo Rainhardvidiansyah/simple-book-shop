@@ -37,7 +37,7 @@ public class FavoriteController {
     @PostMapping("/add")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     public ResponseEntity<?> makeFavorite(@Valid @RequestBody FavoriteRequestDto favRequestDto, Errors errors){
-        ResponseMessage<FavoriteResponse> responseMessage = new ResponseMessage<>();
+        var responseMessage = new ResponseMessage<Object>();
         if(errors.hasErrors()){
             responseMessage.setCode(400);
             responseMessage.setMessage(List.of("Error is happening"));
@@ -66,7 +66,7 @@ public class FavoriteController {
     @GetMapping("/my-favorites")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     public ResponseEntity<?> getUserInFavorite(){
-        ResponseMessage<String> responseMessage = new ResponseMessage<>();
+        var responseMessage = new ResponseMessage<Object>();
         var email = servletRequest.getUserPrincipal().getName();
         var user = userRepo.findAppUserByEmail(email)
                 .orElseThrow(RuntimeException::new);
@@ -92,7 +92,7 @@ public class FavoriteController {
 
         responseMessage.setCode(200);
         responseMessage.setMessage(List.of("Success"));
-        responseMessage.setData(String.valueOf(bookData));
+        responseMessage.setData(joinList);
         return new ResponseEntity<>(responseMessage, HttpStatus.OK);
     }
 
