@@ -39,28 +39,19 @@ public class FavoriteController {
     public ResponseEntity<?> makeFavorite(@Valid @RequestBody FavoriteRequestDto favRequestDto, Errors errors){
         var responseMessage = new ResponseMessage<Object>();
         if(errors.hasErrors()){
-            responseMessage.setCode(400);
-            responseMessage.setMessage(List.of("Error is happening"));
-            responseMessage.setMessage(ErrorUtils.err(errors));
-            responseMessage.setData(null);
-            return new ResponseEntity<>(responseMessage, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(generateFailedResponse(List.of("Error is happening")), HttpStatus.BAD_REQUEST);
         }
         var email = servletRequest.getUserPrincipal().getName();
         AppUser user = userRepo.findAppUserByEmail(email)
                 .orElseThrow(RuntimeException::new);
         if(user == null){
-            responseMessage.setCode(400);
-            responseMessage.setMessage(List.of("User is not allowed to do this"));
-            responseMessage.setData(null);
-            return new ResponseEntity<>(responseMessage, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(generateFailedResponse(List.of("User is not allowed to do this")), HttpStatus.BAD_REQUEST);
         }
         var savedFavorite = favoriteService.createFavorite(favRequestDto.getBookId(),
                 favRequestDto.getContent(), user);
         log.info("Book saved as favorite: {}", savedFavorite.getBook().getTitle());
-        responseMessage.setCode(200);
-        responseMessage.setMessage(List.of("Success"));
-        responseMessage.setData(new FavoriteResponse(savedFavorite.getContent(), savedFavorite.getBook().getTitle()));
-        return new ResponseEntity<>(responseMessage, HttpStatus.OK);
+        return new ResponseEntity<>(generateSuccessResponse("POST",
+                new FavoriteResponse(savedFavorite.getContent(), savedFavorite.getBook().getTitle())), HttpStatus.OK);
     }
 
     @GetMapping("/my-favorites")
@@ -70,30 +61,37 @@ public class FavoriteController {
         var email = servletRequest.getUserPrincipal().getName();
         var user = userRepo.findAppUserByEmail(email)
                 .orElseThrow(RuntimeException::new);
-        log.info(servletRequest.getHeader("What's this? "+ user.getEmail()));
 
         var favList = favoriteService.getUserFavorite(user);
-
         if(favList.isEmpty()){
-            responseMessage.setCode(400);
-            responseMessage.setMessage(List.of("You don't have any favorite"));
-            responseMessage.setData(null);
-            return new ResponseEntity<>(responseMessage, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(generateFailedResponse(List.of("You don't have any favorite")), HttpStatus.BAD_REQUEST);
         }
-
         List<FavoriteResponseInJoin> joinList = new ArrayList<>();
         for(Favorite favorite: favList){
             joinList.add(FavoriteResponseInJoin.From(favorite));
         }
-
         List<String> bookData = joinList.stream()
                         .map(FavoriteResponseInJoin::getTitle).collect(Collectors.toList());
         log.info("List of book: {}", bookData);
+        return new ResponseEntity<>(generateSuccessResponse("GET", joinList), HttpStatus.OK);
+    }
 
+    private ResponseMessage<Object> generateSuccessResponse(String method, Object object){
+        var responseMessage = new ResponseMessage<Object>();
         responseMessage.setCode(200);
+        responseMessage.setMethod(method);
         responseMessage.setMessage(List.of("Success"));
-        responseMessage.setData(joinList);
-        return new ResponseEntity<>(responseMessage, HttpStatus.OK);
+        responseMessage.setData(object);
+        return responseMessage;
+    }
+
+    private ResponseMessage<Object> generateFailedResponse(List<String> message){
+        var responseMessage = new ResponseMessage<Object>();
+        responseMessage.setCode(400);
+        responseMessage.setMethod(null);
+        responseMessage.setMessage(message);
+        responseMessage.setData(null);
+        return responseMessage;
     }
 
 
