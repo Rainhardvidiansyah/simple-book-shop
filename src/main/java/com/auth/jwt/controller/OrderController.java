@@ -2,6 +2,7 @@ package com.auth.jwt.controller;
 
 import com.auth.jwt.dto.request.OrderRequestDto;
 import com.auth.jwt.dto.response.OrderReceiptResponseDto;
+import com.auth.jwt.dto.response.ResponseMessage;
 import com.auth.jwt.dto.utils.ErrorUtils;
 import com.auth.jwt.model.Order;
 import com.auth.jwt.service.OrderService;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -34,12 +36,12 @@ public class OrderController {
             return new ResponseEntity<>(ErrorUtils.err(errors), HttpStatus.BAD_REQUEST);
         }
         if(isUserIdValid(userid)){
-            return new ResponseEntity<>("Data not valid", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(generateFailedResponse(List.of("Data not valid")), HttpStatus.BAD_REQUEST);
         }
         Order order = orderService.makeAnOrder(userid, orderRequestDto.getPaymentMethod());
         Map<String, Object> maps = new HashMap<>();
         maps.put("Invoice", OrderReceiptResponseDto.From(order));
-        return new ResponseEntity<>(maps, HttpStatus.OK);
+        return new ResponseEntity<>(generateSuccessResponse("POST", maps), HttpStatus.OK);
     }
 
     @GetMapping("/user")
@@ -47,7 +49,7 @@ public class OrderController {
     @PreAuthorize("#userid == principal.id or hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> getOrder(@RequestParam Long userid){
         var order = orderService.getOrder(userid);
-        return new ResponseEntity<>(OrderReceiptResponseDto.From(order), HttpStatus.OK);
+        return new ResponseEntity<>(generateSuccessResponse("GET", OrderReceiptResponseDto.From(order)), HttpStatus.OK);
     }
 
     private ResponseEntity<?> headerResponses(String number_order, String totalCost, String payment_method){
@@ -60,5 +62,24 @@ public class OrderController {
 
     private static boolean isUserIdValid(Long userId){
         return !userId.equals("") && userId==null;
+    }
+
+
+    private ResponseMessage<Object> generateSuccessResponse(String method, Object object){
+        var responseMessage = new ResponseMessage<Object>();
+        responseMessage.setCode(200);
+        responseMessage.setMethod(method);
+        responseMessage.setMessage(List.of("Success"));
+        responseMessage.setData(object);
+        return responseMessage;
+    }
+
+    private ResponseMessage<Object> generateFailedResponse(List<String> message){
+        var responseMessage = new ResponseMessage<Object>();
+        responseMessage.setCode(400);
+        responseMessage.setMethod(null);
+        responseMessage.setMessage(message);
+        responseMessage.setData(null);
+        return responseMessage;
     }
 }
