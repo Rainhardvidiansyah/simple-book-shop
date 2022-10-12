@@ -1,7 +1,6 @@
 package com.auth.jwt.dto.request;
 
 
-import com.auth.jwt.validator.payment.PaymentMethodAnnotation;
 import lombok.*;
 
 @AllArgsConstructor @NoArgsConstructor
@@ -14,5 +13,9 @@ public class TransactionRequestDto {
     private String orderNumber;
 
     private double totalPrice;
+
+    private String senderAccountNumber;
+
+    private String senderBank;
 
 }

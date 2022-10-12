@@ -19,6 +19,10 @@ public class Transaction {
 
     private String orderNumber;
 
+    private String senderAccountNumber;
+
+    private String senderBank;
+
     private double totalPrice;
 
     private Date date;

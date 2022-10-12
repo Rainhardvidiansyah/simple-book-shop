@@ -21,23 +21,26 @@ public class TransactionService {
     private final OrderService orderService;
     private final UserRepo userRepo;
 
-    public Transaction transaction(Long userId, String orderNumber, double totalPrice, String paymentMethod){
+    public Transaction transaction(Long userId, String orderNumber, double totalPrice, String paymentMethod, String senderAccountNumber, String senderBank){
         var user = userRepo.findById(userId).orElseThrow(()
                 -> new RuntimeException("User not found!"));
+
         var order = orderService.findOrderId(orderNumber);
+        if(user.getId() != order.getUser().getId()){
+            throw new RuntimeException("User is different");
+        }
         var transaction = new Transaction();
         try {
-            if(null != order){
-                if(transaction.getTotalPrice() == order.getTotalPrice()){
-                    transaction.setPaymentMethod(paymentMethod);
-                    transaction.setOrderNumber(order.getId());
-                    transaction.setDate(new Date());
-                    transaction.setOrder(order);
-                    transaction.setUser(order.getUser());
-                    order.setTransaction(transaction);
-                }
-            }else{
-                throw new RuntimeException("Error is happening");
+            if(totalPrice == order.getTotalPrice()){
+                transaction.setPaymentMethod(paymentMethod);
+                transaction.setOrderNumber(order.getId());
+                transaction.setTotalPrice(totalPrice);
+                transaction.setSenderAccountNumber(senderAccountNumber);
+                transaction.setSenderBank(senderBank);
+                transaction.setDate(new Date());
+                transaction.setOrder(order);
+                transaction.setUser(order.getUser());
+                order.setTransaction(transaction);
             }
         }catch (Exception e){
             e.printStackTrace();
