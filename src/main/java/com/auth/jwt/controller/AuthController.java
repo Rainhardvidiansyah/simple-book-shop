@@ -71,6 +71,7 @@ public class AuthController {
         var refreshToken = refreshTokenService.refreshToken(userDetails.getId());
         log.info("User logged in-> id {}, email: {}", userDetails.getId(), userDetails.getUsername());
         response.setCode(200);
+        response.setMethod("POST");
         response.setMessage(List.of("Success"));
         response.setData(LoginResponseDto.userData(userDetails.getUsername(), jwt, refreshToken.getToken(), roles));
         return new ResponseEntity<>(response,
@@ -84,6 +85,7 @@ public class AuthController {
         userService.deleteByUserId(userId);
         ResponseMessage<Object> responseMessage = new ResponseMessage<>();
         responseMessage.setCode(200);
+        responseMessage.setMethod("GET");
         responseMessage.setMessage(List.of(String.format("User with id %d has logged out", userId)));
         responseMessage.setData(null);
         return new ResponseEntity<>(responseMessage, HttpStatus.OK);
@@ -98,6 +100,7 @@ public class AuthController {
                 .map(userData -> {
                     String token = jwtUtils.generateTokenFromUserName(userData.getFullName());
                     responseMessage.setCode(200);
+                    responseMessage.setMethod("POST");
                     responseMessage.setMessage(List.of("Success"));
                     responseMessage.setData(new TokenRefreshResponse(token, tokenRequestDto.getRefreshToken()));
                     return ResponseEntity.ok().body(responseMessage);
