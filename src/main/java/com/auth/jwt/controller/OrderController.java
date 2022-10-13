@@ -33,10 +33,10 @@ public class OrderController {
     @PreAuthorize("#userid == principal.id or hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> order(@RequestParam Long userid, @Valid @RequestBody OrderRequestDto orderRequestDto, Errors errors){
         if(errors.hasErrors()){
-            return new ResponseEntity<>(ErrorUtils.err(errors), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(generateFailedResponse(400, "POST", List.of(""), ErrorUtils.err(errors)), HttpStatus.BAD_REQUEST);
         }
         if(isUserIdValid(userid)){
-            return new ResponseEntity<>(generateFailedResponse(List.of("Data not valid")), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(generateFailedResponse(400, "POST", List.of("User is not valid")), HttpStatus.BAD_REQUEST);
         }
         Order order = orderService.makeAnOrder(userid, orderRequestDto.getPaymentMethod());
         Map<String, Object> maps = new HashMap<>();
@@ -51,7 +51,6 @@ public class OrderController {
         var order = orderService.getOrder(userid);
         return new ResponseEntity<>(generateSuccessResponse("GET", OrderReceiptResponseDto.From(order)), HttpStatus.OK);
     }
-
     private ResponseEntity<?> headerResponses(String number_order, String totalCost, String payment_method){
         HttpHeaders headers = new HttpHeaders();
         headers.add("Order number:", number_order);
@@ -74,12 +73,21 @@ public class OrderController {
         return responseMessage;
     }
 
-    private ResponseMessage<Object> generateFailedResponse(List<String> message){
+    private ResponseMessage<Object> generateFailedResponse(int code, String method, List<String> message){
         var responseMessage = new ResponseMessage<Object>();
-        responseMessage.setCode(400);
+        responseMessage.setCode(code);
         responseMessage.setMethod(null);
         responseMessage.setMessage(message);
         responseMessage.setData(null);
+        return responseMessage;
+    }
+
+    private ResponseMessage<Object> generateFailedResponse(int code, String method, List<String> message, Object object){
+        var responseMessage = new ResponseMessage<Object>();
+        responseMessage.setCode(code);
+        responseMessage.setMethod(null);
+        responseMessage.setMessage(message);
+        responseMessage.setData(object);
         return responseMessage;
     }
 }

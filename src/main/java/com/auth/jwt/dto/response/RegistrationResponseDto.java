@@ -3,8 +3,9 @@ package com.auth.jwt.dto.response;
 import com.auth.jwt.user.AppUser;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
-@Getter @Setter
+@Getter @Setter @ToString
 public class RegistrationResponseDto {
 
     private String fullName;

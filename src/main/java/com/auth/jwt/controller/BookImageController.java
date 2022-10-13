@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 @RestController
-@RequestMapping("/api/image")
+@RequestMapping("/api/v1/image")
 @RequiredArgsConstructor
 @Slf4j
 public class BookImageController {

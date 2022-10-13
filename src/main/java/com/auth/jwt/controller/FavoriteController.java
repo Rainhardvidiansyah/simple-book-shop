@@ -39,19 +39,19 @@ public class FavoriteController {
     public ResponseEntity<?> makeFavorite(@Valid @RequestBody FavoriteRequestDto favRequestDto, Errors errors){
         var responseMessage = new ResponseMessage<Object>();
         if(errors.hasErrors()){
-            return new ResponseEntity<>(generateFailedResponse(List.of("Error is happening")), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(generateFailedResponse(400, "POST", List.of("Please choose one book")), HttpStatus.BAD_REQUEST);
         }
         var email = servletRequest.getUserPrincipal().getName();
         AppUser user = userRepo.findAppUserByEmail(email)
                 .orElseThrow(RuntimeException::new);
         if(user == null){
-            return new ResponseEntity<>(generateFailedResponse(List.of("User is not allowed to do this")), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(generateFailedResponse(400,"POST", List.of("User is not allowed to do this")), HttpStatus.BAD_REQUEST);
         }
         var savedFavorite = favoriteService.createFavorite(favRequestDto.getBookId(),
                 favRequestDto.getContent(), user);
         log.info("Book saved as favorite: {}", savedFavorite.getBook().getTitle());
-        return new ResponseEntity<>(generateSuccessResponse("POST",
-                new FavoriteResponse(savedFavorite.getContent(), savedFavorite.getBook().getTitle())), HttpStatus.OK);
+        return new ResponseEntity<>(generateSuccessResponse(200,"POST",
+                new FavoriteResponse(savedFavorite.getContent(), savedFavorite.getBook().getTitle())), HttpStatus.CREATED);
     }
 
     @GetMapping("/my-favorites")
@@ -64,7 +64,7 @@ public class FavoriteController {
 
         var favList = favoriteService.getUserFavorite(user);
         if(favList.isEmpty()){
-            return new ResponseEntity<>(generateFailedResponse(List.of("You don't have any favorite")), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(generateFailedResponse(400,"GET", List.of("You don't have any favorite")), HttpStatus.BAD_REQUEST);
         }
         List<FavoriteResponseInJoin> joinList = new ArrayList<>();
         for(Favorite favorite: favList){
@@ -73,22 +73,31 @@ public class FavoriteController {
         List<String> bookData = joinList.stream()
                         .map(FavoriteResponseInJoin::getTitle).collect(Collectors.toList());
         log.info("List of book: {}", bookData);
-        return new ResponseEntity<>(generateSuccessResponse("GET", joinList), HttpStatus.OK);
+        return new ResponseEntity<>(generateSuccessResponse(200,"GET", joinList), HttpStatus.OK);
     }
 
-    private ResponseMessage<Object> generateSuccessResponse(String method, Object object){
+    private ResponseMessage<Object> generateSuccessResponse(int code, String method, Object object){
         var responseMessage = new ResponseMessage<Object>();
-        responseMessage.setCode(200);
+        responseMessage.setCode(code);
         responseMessage.setMethod(method);
         responseMessage.setMessage(List.of("Success"));
         responseMessage.setData(object);
         return responseMessage;
     }
 
-    private ResponseMessage<Object> generateFailedResponse(List<String> message){
+    private ResponseMessage<Object> generateFailedResponse(String method, List<String> message){
         var responseMessage = new ResponseMessage<Object>();
         responseMessage.setCode(400);
-        responseMessage.setMethod(null);
+        responseMessage.setMethod(method);
+        responseMessage.setMessage(message);
+        responseMessage.setData(null);
+        return responseMessage;
+    }
+
+    private ResponseMessage<Object> generateFailedResponse(int code, String method, List<String> message){
+        var responseMessage = new ResponseMessage<Object>();
+        responseMessage.setCode(code);
+        responseMessage.setMethod(method);
         responseMessage.setMessage(message);
         responseMessage.setData(null);
         return responseMessage;

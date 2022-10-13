@@ -2,6 +2,7 @@ package com.auth.jwt.controller;
 
 import com.auth.jwt.dto.request.RegistrationRequest;
 import com.auth.jwt.dto.response.RegistrationResponseDto;
+import com.auth.jwt.dto.response.ResponseMessage;
 import com.auth.jwt.service.RegistrationService;
 import com.auth.jwt.user.AppUser;
 import lombok.RequiredArgsConstructor;
@@ -31,11 +32,11 @@ public class RegistrationController {
     public ResponseEntity<?> registration(@RequestBody @Valid RegistrationRequest request, Errors errors){
         boolean userExisting = registrationService.checkUserExisting(request.getEmail());
         if(userExisting){
-            return new ResponseEntity<>(String.format("%s has been registered", request.getEmail()),
+            return new ResponseEntity<>(generateFailedResponse("POST", List.of(String.format("%s has been registered", request.getEmail()))),
                     HttpStatus.BAD_REQUEST);
         }
         if(errors.hasErrors()){
-            return new ResponseEntity<>(errorMessages(errors), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(generateFailedResponse("POST", List.of(""), errorMessages(errors)), HttpStatus.BAD_REQUEST);
         }
         AppUser user = new AppUser();
         user.setFullName(request.getFullName());
@@ -43,7 +44,7 @@ public class RegistrationController {
         user.setPassword(request.getPassword());
         AppUser savedUser = registrationService.registrationUser(user);
         log.info("User just registered {}", RegistrationResponseDto.From(savedUser));
-        return new ResponseEntity<>(RegistrationResponseDto.From(savedUser), HttpStatus.CREATED);
+        return new ResponseEntity<>(generateSuccessResponse(201, "POST", RegistrationResponseDto.From(savedUser)), HttpStatus.CREATED);
     }
 
     private static List<String> errorMessages(Errors errors){
@@ -54,6 +55,32 @@ public class RegistrationController {
             }
         }
         return errorMessages;
+    }
+
+    private ResponseMessage<Object> generateSuccessResponse(int code, String method, Object object){
+        var responseMessage = new ResponseMessage<Object>();
+        responseMessage.setCode(code);
+        responseMessage.setMethod(method);
+        responseMessage.setMessage(List.of("Success"));
+        responseMessage.setData(object);
+        return responseMessage;
+    }
+
+    private ResponseMessage<Object> generateFailedResponse(String method, List<String> message, Object object){
+        var responseMessage = new ResponseMessage<Object>();
+        responseMessage.setCode(400);
+        responseMessage.setMethod(method);
+        responseMessage.setMessage(message);
+        responseMessage.setData(object);
+        return responseMessage;
+    }
+    private ResponseMessage<Object> generateFailedResponse(String method, List<String> message){
+        var responseMessage = new ResponseMessage<Object>();
+        responseMessage.setCode(400);
+        responseMessage.setMethod(method);
+        responseMessage.setMessage(message);
+        responseMessage.setData(null);
+        return responseMessage;
     }
 
 

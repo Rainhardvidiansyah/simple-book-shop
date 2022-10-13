@@ -5,10 +5,11 @@ import com.auth.jwt.model.Transaction;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @AllArgsConstructor
 @Getter
-@Setter
+@Setter @ToString
 public class TransactionResponseDto {
 
     private Long transactionId;

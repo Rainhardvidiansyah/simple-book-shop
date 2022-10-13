@@ -34,7 +34,7 @@ public class CartController {
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole ('ROLE_USER')")
     public ResponseEntity<?> addBookToCart(@RequestBody CartRequestDto cartDto){
         if (cartDto.getQuantity() < 1){
-            return new ResponseEntity<>(generateFailedResponse(List.of("Cart cannot be empty!")), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(generateFailedResponse("POST", List.of("Cart cannot be empty!")), HttpStatus.BAD_REQUEST);
         }
         var email = servletRequest.getUserPrincipal().getName();
         var user = userRepo.findAppUserByEmail(email)
@@ -59,7 +59,7 @@ public class CartController {
                 .orElseThrow(RuntimeException::new);
         var cartResponseForUser = cartService.joinCartAndUser(user);
         if(!isNotNull(cartResponseForUser.getCartResponses())){
-            return new ResponseEntity<>(generateFailedResponse(List.of("You haven't added the product to your shopping cart yet")),
+            return new ResponseEntity<>(generateFailedResponse("GET", List.of("You haven't added the product to your shopping cart yet")),
                     HttpStatus.BAD_REQUEST);
         }
         log.info("User email: {}", user.getEmail());
@@ -80,14 +80,14 @@ public class CartController {
     @ResponseBody
     @PreAuthorize("#userid == principal.id or hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> editCart(@RequestParam(required = true) Long userid, @RequestParam(required = true) Long cart_id,
-                                      @RequestBody EditCartRequestDto editDto){
+                                      @RequestBody EditCartRequestDto editCartDto){
         var email = servletRequest.getUserPrincipal().getName();
         var user = userRepo.findAppUserByEmail(email)
                 .orElseThrow(RuntimeException::new);
-        if(editDto.getQuantity() == 0){
-            return new ResponseEntity<>(generateFailedResponse(List.of("Cart cannot be empty!")), HttpStatus.BAD_REQUEST);
+        if(editCartDto.getQuantity() == 0){
+            return new ResponseEntity<>(generateFailedResponse("PUT", List.of("Cart cannot be empty!")), HttpStatus.BAD_REQUEST);
         }
-        Cart savedCart = cartService.editCart(cart_id, editDto.getQuantity(), editDto.getNote(), userid);
+        Cart savedCart = cartService.editCart(cart_id, editCartDto.getQuantity(), editCartDto.getNote(), userid);
         var response = new CartResponse(savedCart);
         return new ResponseEntity<>(generateSuccessResponse("PUT", response), HttpStatus.OK);
     }
@@ -101,10 +101,10 @@ public class CartController {
         return responseMessage;
     }
 
-    private ResponseMessage<Object> generateFailedResponse(List<String> message){
+    private ResponseMessage<Object> generateFailedResponse(String method, List<String> message){
         var responseMessage = new ResponseMessage<Object>();
         responseMessage.setCode(400);
-        responseMessage.setMethod(null);
+        responseMessage.setMethod(method);
         responseMessage.setMessage(message);
         responseMessage.setData(null);
         return responseMessage;
