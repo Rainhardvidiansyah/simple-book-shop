@@ -12,7 +12,9 @@ import java.util.Optional;
 public interface OrderRepo extends JpaRepository<Order, String> {
 
     List<Order> findAllByUserOrderByCreatedDateDesc(AppUser user);
+    List<Order> findAllByOrderByCreatedDateAsc();
     Order findOrderByUser(AppUser user);
+    Optional<Order> findOrderById(String orderNumber);
 
 
 }

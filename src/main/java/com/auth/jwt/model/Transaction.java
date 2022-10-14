@@ -1,6 +1,8 @@
 package com.auth.jwt.model;
 
 import com.auth.jwt.user.AppUser;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,6 +33,7 @@ public class Transaction {
     @JoinColumn(name = "user_id")
     private AppUser user;
 
+    @JsonBackReference
     @OneToOne(mappedBy = "transaction")
     private Order order;
 
