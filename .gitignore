@@ -40,3 +40,4 @@ build/
 /src/main/java/com/auth/jwt/security/service/IEmailService.java
 /src/main/java/com/auth/jwt/service/IEmailService.java
 /src/main/java/com/auth/jwt/service/OutsiderApiService.java
+
