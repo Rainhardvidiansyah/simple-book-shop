@@ -3,6 +3,7 @@ package com.auth.jwt.controller;
 import com.auth.jwt.dto.request.CartRequestDto;
 import com.auth.jwt.dto.request.EditCartRequestDto;
 import com.auth.jwt.dto.response.CartResponse;
+import com.auth.jwt.dto.response.CartUserResponse;
 import com.auth.jwt.dto.response.ResponseMessage;
 import com.auth.jwt.model.Cart;
 import com.auth.jwt.repository.UserRepo;
@@ -39,12 +40,12 @@ public class CartController {
         var email = servletRequest.getUserPrincipal().getName();
         var user = userRepo.findAppUserByEmail(email)
                 .orElseThrow(RuntimeException::new);
-        var savedCart = cartService.addProductToCart(cartDto.getBookId(), cartDto.getQuantity(),
+        var cart = cartService.addProductToCart(cartDto.getBookId(), cartDto.getQuantity(),
                 cartDto.getNote(), user);
         log.info("Book id: {}", cartDto.getBookId());
         log.info("Note: {}", cartDto.getNote());
         log.info("User: {}", user);
-        return new ResponseEntity<>(generateSuccessResponse("POST", savedCart), HttpStatus.OK);
+        return new ResponseEntity<>(generateSuccessResponse("POST", CartUserResponse.from(cart)), HttpStatus.OK);
     }
 
     private static boolean isNotNull(List<CartResponse> cartResponses){

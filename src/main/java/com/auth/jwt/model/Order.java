@@ -1,6 +1,7 @@
 package com.auth.jwt.model;
 
 import com.auth.jwt.user.AppUser;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -45,6 +46,7 @@ public class Order {
 
     @OneToOne
     @JoinColumn(name = "transaction_id", referencedColumnName = "id")
+    @JsonBackReference
     private Transaction transaction;
 
 

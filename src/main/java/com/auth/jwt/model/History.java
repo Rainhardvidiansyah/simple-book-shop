@@ -2,6 +2,7 @@ package com.auth.jwt.model;
 
 
 import com.auth.jwt.user.AppUser;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,10 +21,12 @@ public class History {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     private AppUser user;
 
     @OneToOne
     @JoinColumn(name = "order_id", referencedColumnName = "id")
+    @JsonBackReference
     private Order order;
 
 
