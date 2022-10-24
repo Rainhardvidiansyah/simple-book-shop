@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@AllArgsConstructor @NoArgsConstructor
+@AllArgsConstructor
 @Getter @Setter
 public class AdminTransactionResponse {
 
@@ -21,11 +21,16 @@ public class AdminTransactionResponse {
     private Long transactionId;
     private String orderNumber;
     private Date orderDate;
+    private boolean hasBeenPaid;
     List<String> allBooks = new ArrayList<>();
+
+    public AdminTransactionResponse(){
+        this.hasBeenPaid = false;
+    }
 
     public static AdminTransactionResponse from(Transaction transaction){
         return new AdminTransactionResponse(transaction.getUser().getId(), transaction.getUser().getEmail(),
-                transaction.getId(), transaction.getOrderNumber(), transaction.getOrder().getCreatedDate(),
+                transaction.getId(), transaction.getOrderNumber(), transaction.getOrder().getCreatedDate(), false,
                 transaction.getOrder().getOrderItems().stream().map(item -> item.getBook().getTitle()).collect(Collectors.toList())
         );
     }

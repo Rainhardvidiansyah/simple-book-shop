@@ -49,17 +49,46 @@ public class AdminController {
         return new ResponseEntity<>(generateSuccessResponse(200, "GET", adminOrderResponses), HttpStatus.OK);
     }
 
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> findId(@PathVariable("id")String id){
+        var adm = adminService.findOrderNumber(id).orElse(null);
+        return new ResponseEntity<>(generateSuccessResponse(200, "POST", AdminOrderResponse.from(adm)), HttpStatus.OK);
+    }
+
+    @GetMapping("/true-order")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> findOrderedTrue(){
+        var orderedTrue = adminService.findOrderedTrue();
+        List<AdminOrderResponse> adminOrderResponses = new ArrayList<>();
+        for(Order order : orderedTrue){
+            adminOrderResponses.add(AdminOrderResponse.from(order));
+        }
+        return new ResponseEntity<>(generateSuccessResponse(200, "POST", adminOrderResponses), HttpStatus.OK);
+    }
+
+    @GetMapping("/false-order")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> findOrderedFalse(){
+        var orderedTrue = adminService.findOrderedFalse();
+        List<AdminOrderResponse> adminOrderResponses = new ArrayList<>();
+        for(Order order : orderedTrue){
+            adminOrderResponses.add(AdminOrderResponse.from(order));
+        }
+        return new ResponseEntity<>(generateSuccessResponse(200, "POST", adminOrderResponses), HttpStatus.OK);
+    }
+
     @GetMapping("/all-transaction")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> getAllTransaction(){
         String email = servletRequest.getUserPrincipal().getName();
         var user = userRepo.findAppUserByEmail(email);
-        var allTransactions = adminService.getAllTransaction();
+        var transactions = adminService.getAllTransaction();
         List<AdminTransactionResponse> adminTransactionResponse = new ArrayList<>();
-        for(Transaction transaction: allTransactions){
+        for(Transaction transaction: transactions){
             adminTransactionResponse.add(AdminTransactionResponse.from(transaction));
         }
-        if(allTransactions.isEmpty()){
+        if(transactions.isEmpty()){
             return new ResponseEntity<>(generateFailedResponse(404, "GET", List.of("No Transaction")), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(generateSuccessResponse(200, "GET", adminTransactionResponse), HttpStatus.OK);
@@ -74,14 +103,14 @@ public class AdminController {
         return new ResponseEntity<>(generateSuccessResponse(200, "POST", String.format("Order Confirmed")), HttpStatus.OK);
     }
 
-    @GetMapping("/order-number")
+    @PostMapping("/order-number")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> searchOrderNumber(@RequestBody OrderNumberRequestDto orderNumberRequestDto){
-        var order = adminService.findOrderNumber(orderNumberRequestDto.getOrderNumber());
-        if(order.isEmpty()){
+        var order = adminService.findOrderNumber(orderNumberRequestDto.getOrderNumber()).orElse(null);
+        if(order == null){
             return new ResponseEntity<>(generateFailedResponse(404, "POST", List.of("Order Not Found")), HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(generateSuccessResponse(200, "POST", order), HttpStatus.OK);
+        return new ResponseEntity<>(generateSuccessResponse(200, "POST", AdminOrderResponse.from(order)), HttpStatus.OK);
     }
 
 

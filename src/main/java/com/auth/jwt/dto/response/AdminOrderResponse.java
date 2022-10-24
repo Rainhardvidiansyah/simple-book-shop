@@ -16,11 +16,12 @@ public class AdminOrderResponse {
     private String userName;
     private String orderNumber;
     private Date orderDate;
+    private boolean hasBeenPaid;
     private List<String> allBooks = new ArrayList<>();
 
     public static AdminOrderResponse from(Order order){
     return new AdminOrderResponse(order.getUser().getId(), order.getUser().getEmail(),
-            order.getId(), order.getCreatedDate(),
+            order.getId(), order.getCreatedDate(), order.isOrdered(),
             order.getOrderItems().stream().map(item -> item.getBook().getTitle()).collect(Collectors.toList()));
     }
 }

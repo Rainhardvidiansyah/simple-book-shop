@@ -5,7 +5,6 @@ import com.auth.jwt.model.Order;
 import com.auth.jwt.model.Transaction;
 import com.auth.jwt.repository.OrderRepo;
 import com.auth.jwt.repository.TransactionRepo;
-import com.auth.jwt.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,11 +16,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AdminService {
 
-    private final UserRepo userRepo;
     private final OrderRepo orderRepo;
     private final TransactionRepo transactionRepo;
     private final HistoryService historyService;
-
     private final EmailService emailService;
 
     public void verifyOrder(String transactionNumber, boolean makeTrue){
@@ -32,10 +29,9 @@ public class AdminService {
         if(order != null){
             order.setOrdered(makeTrue);
             history = historyService.saveMyHistory(order.getUser().getId());
-            //send email to user that his/her order approved
+            emailService.sendConfirmationSuccess(order.getId(), order.getUser());
         }
         orderRepo.save(order);
-
     }
 
     public List<Order> getAllOrder(){
@@ -49,5 +45,12 @@ public class AdminService {
 
     public Optional<Order> findOrderNumber(String orderId){
         return orderRepo.findOrderById(orderId);
+    }
+
+    public List<Order> findOrderedTrue(){
+        return orderRepo.findAllOrderedTrue();
+    }
+    public List<Order> findOrderedFalse(){
+        return orderRepo.findAllOrderedFalse();
     }
 }

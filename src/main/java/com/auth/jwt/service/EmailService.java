@@ -105,6 +105,22 @@ public class EmailService {
         }
     }
 
+    public void sendConfirmationSuccess(String order_id, AppUser user){
+        String userName = user.getFullName();
+        var simpleMailMessage = new SimpleMailMessage();
+        try {
+            simpleMailMessage.setFrom("Book@shop.com");
+            simpleMailMessage.setTo(user.getEmail());
+            simpleMailMessage.setText(
+                    "Hi " + userName + ", your order with number " + order_id + " will be sent as soon as possible."+
+                            " We will inform you after sending your books");
+            simpleMailMessage.setSentDate(new Date());
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        javaMailSender.send(simpleMailMessage);
+    }
+
 
 
 
