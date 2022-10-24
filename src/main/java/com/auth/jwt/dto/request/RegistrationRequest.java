@@ -4,14 +4,11 @@ package com.auth.jwt.dto.request;
 import com.auth.jwt.validator.password.MatchPasswordAnnotation;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
-
 import javax.validation.constraints.NotBlank;
-import java.util.ArrayList;
-import java.util.List;
 
 @NoArgsConstructor @AllArgsConstructor
 @Setter @Getter
-@MatchPasswordAnnotation(message = "Password don't match!")
+@MatchPasswordAnnotation(message = "Passwords don't match!")
 public class RegistrationRequest {
 
     @NotBlank(message = "Name cannot be blank")
@@ -27,5 +24,4 @@ public class RegistrationRequest {
 
     private String matchPassword;
 
-    private List<String> authority = new ArrayList<>();
 }
