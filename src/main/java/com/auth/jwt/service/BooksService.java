@@ -6,12 +6,12 @@ import com.auth.jwt.model.BookImage;
 
 import com.auth.jwt.repository.BookImageRepo;
 import com.auth.jwt.repository.BooksRepo;
-import com.auth.jwt.repository.CategoryRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -22,9 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BooksService {
 
-
     private final BooksRepo booksRepo;
-    private final CategoryRepo categoryRepo;
     private final BookImageRepo imageRepo;
 
     private BigDecimal setPrice(String price){
@@ -54,15 +52,20 @@ public class BooksService {
     }
 
     public List<Book> findBooksByTags(String tags){
-        return booksRepo.findTagsLike(tags);
+        return booksRepo.findBookByTagsContainingIgnoreCase(tags);
     }
 
+    public List<Book> findBooksByTitle(String title){
+        return booksRepo.findBookByTitleContainingIgnoreCase(title);
+    }
+
+    @Transactional
     public List<Book> findAllBooks(){
         return booksRepo.findAll();
     }
 
     public List<Book> findBooksByAuthorName(String authorName){
-        return booksRepo.findByAuthorOrderByTitleAsc(authorName);
+        return booksRepo.findByAuthorContainingIgnoreCaseOrderByTitleAsc(authorName);
     }
 
     public Optional<Book> findBookId(Long id){
@@ -87,12 +90,14 @@ public class BooksService {
         return booksRepo.save(updateBook);
     }
 
+    @Transactional
     public void deleteBook(Long id){
         booksRepo.deleteById(id);
     }
 
     public Book insertImage(Long bookId, MultipartFile file) {
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+        var book = booksRepo.findById(bookId).orElseThrow(RuntimeException::new);
         var bookImage = new BookImage();
         try {
             if (fileName.contains("..")) {
@@ -100,18 +105,14 @@ public class BooksService {
             }
             bookImage.setImageName(fileName);
             bookImage.setImageData(file.getBytes());
+            bookImage.setBook(book);
             bookImage.setContentType(file.getContentType());
         }catch (IOException e) {
             e.printStackTrace();
         }
-        List<BookImage> imageList = new ArrayList<>();
-        imageList.add(bookImage);
-        var book = booksRepo.findById(bookId);
-        book.ifPresentOrElse(
-                storeData -> storeData.setBookImage(imageList),
-                () -> System.out.printf("%s not found", book));
+        book.addImage(bookImage);
         BookImage savedImage = imageRepo.save(bookImage);
-        return book.get();
+        return book;
     }
 
     public void addAnotherImage(Long id, MultipartFile[] files) {

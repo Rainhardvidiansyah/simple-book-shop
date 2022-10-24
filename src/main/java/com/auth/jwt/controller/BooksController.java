@@ -1,8 +1,9 @@
 package com.auth.jwt.controller;
 
 import com.auth.jwt.activities.BookUploader;
-import com.auth.jwt.dto.request.BooksDtoRequest;
+import com.auth.jwt.dto.request.BooksRequestDto;
 import com.auth.jwt.dto.request.FindAuthorAndBooksRequest;
+import com.auth.jwt.dto.request.FindBookTitleRequestDto;
 import com.auth.jwt.dto.request.FindBooksTagRequestDto;
 import com.auth.jwt.dto.response.BookResponse;
 import com.auth.jwt.dto.response.ResponseMessage;
@@ -33,7 +34,7 @@ public class BooksController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/save")
-    public ResponseEntity<?> saveBookData(@RequestBody BooksDtoRequest booksDto){
+    public ResponseEntity<?> saveBookData(@RequestBody BooksRequestDto booksDto){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(booksDto.getTitle().isEmpty() && booksDto.getTitle().isBlank()){
             return new ResponseEntity<>(generateFailedResponse("POST", List.of("Tittle must be writter")),
@@ -60,47 +61,83 @@ public class BooksController {
     @GetMapping("/all")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER') or hasRole('ROLE_USER')")
     public ResponseEntity<?> findAllBooks(){
-        var bookList = booksService.findAllBooks();
-        return new ResponseEntity<>(generateSuccessResponse("GET", generateResponseBookList(bookList)), HttpStatus.OK);
+        var listAllBooks = booksService.findAllBooks();
+        if(listAllBooks.isEmpty()){
+            return new ResponseEntity<>(generateFailedResponse(404, "GET",List.of("No Books Found")), HttpStatus.NOT_FOUND);
+        }
+        List<BookResponse> bookResponses = new ArrayList<>();
+        for(Book book : listAllBooks){
+            bookResponses.add(BookResponse.From(book));
+        }
+        return new ResponseEntity<>(generateSuccessResponse("GET", bookResponses), HttpStatus.OK);
     }
 
     @PostMapping("/search/author")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER') or hasRole('ROLE_USER')")
     public ResponseEntity<?> findTitleByAuthor(@RequestBody FindAuthorAndBooksRequest request){
 
-        var bookList = booksService.findBooksByAuthorName(request.getAuthorName());
-        if(bookList.isEmpty()){
-            return new ResponseEntity<>(generateFailedResponse("POST", List.of("Author not found")),
-                    HttpStatus.OK);
+        var booksAuthorName = booksService.findBooksByAuthorName(request.getAuthorName());
+        if(booksAuthorName.isEmpty()){
+            return new ResponseEntity<>(generateFailedResponse(404,"POST", List.of("Author not found")),
+                    HttpStatus.NOT_FOUND);
         }
-        List<BookResponse> responses = new ArrayList<>();
-        for(Book book: bookList){
-            responses.add(BookResponse.From(book));
+        List<BookResponse> bookResponses = new ArrayList<>();
+        for(Book book: booksAuthorName){
+            bookResponses.add(BookResponse.From(book));
         }
-        return new ResponseEntity<>(generateSuccessResponse("POST", generateResponseBookList(bookList)), HttpStatus.OK);
+        return new ResponseEntity<>(generateSuccessResponse("POST", bookResponses), HttpStatus.OK);
     }
 
     @GetMapping()
     @ResponseBody
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER') or hasRole('ROLE_USER')")
-    public ResponseEntity<?> findBookId(@RequestParam Long data_id){
-        var book = booksService.findBookId(data_id);
-        if(book.isEmpty()){
-            return new ResponseEntity<>(generateFailedResponse("GET", List.of("Book not found")), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<?> findBookId(@RequestParam Long id){
+        var bookId = booksService.findBookId(id);
+        if(bookId.isEmpty()){
+            return new ResponseEntity<>(generateFailedResponse(404, "GET", List.of("Book not found")), HttpStatus.NOT_FOUND);
         }
-            return new ResponseEntity<>(generateSuccessResponse("GET", BookResponse.From(book.get())), HttpStatus.OK);
+            return new ResponseEntity<>(generateSuccessResponse("GET", BookResponse.From(bookId.get())), HttpStatus.OK);
         }
+
+    @PostMapping("/search/tags")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+    public ResponseEntity<?> findTagsBook(@RequestBody FindBooksTagRequestDto requestDto){
+        var bookTag = booksService.findBooksByTags(requestDto.getTags());
+        if(bookTag.isEmpty()){
+            return new ResponseEntity<>(generateFailedResponse(404,"POST", List.of("Tags not found")), HttpStatus.NOT_FOUND);
+        }
+        List<BookResponse> responses = new ArrayList<>();
+        for(Book book: bookTag){
+            responses.add(BookResponse.From(book));
+        }
+        return new ResponseEntity<>(generateSuccessResponse("POST", responses), HttpStatus.OK);
+    }
+
+    @PostMapping("/search/title")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+    public ResponseEntity<?> findBookTitle(@RequestBody FindBookTitleRequestDto bookTitleRequestDto){
+        var bookTitle = booksService.findBooksByTitle(bookTitleRequestDto.getTitle());
+        if(bookTitle.isEmpty()){
+            return new ResponseEntity<>(generateFailedResponse(404,"POST", List.of("Book not found")), HttpStatus.NOT_FOUND);
+        }
+        List<BookResponse> responses = new ArrayList<>();
+        for(Book book: bookTitle){
+            responses.add(BookResponse.From(book));
+        }
+        return new ResponseEntity<>(generateSuccessResponse("POST", responses), HttpStatus.OK);
+    }
+
 
     @PutMapping("/update")
     @ResponseBody
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> updateBook(@RequestParam Long id, @RequestBody BooksDtoRequest booksDto){
+    public ResponseEntity<?> updateBook(@RequestParam Long id, @RequestBody BooksRequestDto booksDto){
         if(booksDto.getTitle().isEmpty()){
             return new ResponseEntity<>(generateFailedResponse("PUT", List.of("Title must be written!")), HttpStatus.BAD_REQUEST);
         }
         var book = booksService.findBookId(id);
         if(book.isEmpty()){
-            return new ResponseEntity<>(generateFailedResponse("PUT", List.of("Book not found")), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(generateFailedResponse(404,"PUT", List.of("Book not found")), HttpStatus.NOT_FOUND);
         }
         var updatedBook = booksService.updateBook(id, Book.saveFromDto(booksDto));
         log.info("Updated {}", updatedBook);
@@ -117,19 +154,6 @@ public class BooksController {
         return new ResponseEntity<>(deletingResponse, HttpStatus.NO_CONTENT);
     }
 
-    @PostMapping("/search/tags")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
-    public ResponseEntity<?> findTagsBook(@RequestBody FindBooksTagRequestDto requestDto){
-        var bookList = booksService.findBooksByTags(requestDto.getTags());
-        if(bookList == null){
-            return new ResponseEntity<>(generateFailedResponse("POST", List.of("Tags not found")), HttpStatus.BAD_REQUEST);
-        }
-        List<BookResponse> responses = new ArrayList<>();
-        for(Book book:bookList){
-            responses.add(BookResponse.From(book));
-        }
-        return new ResponseEntity<>(generateSuccessResponse("POST", responses), HttpStatus.OK);
-    }
 
     @GetMapping("/amount")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -159,22 +183,12 @@ public class BooksController {
     public ResponseEntity<?> storeMoreImages(@PathVariable("book_id") Long bookId,
                                       @RequestParam("file") MultipartFile[] file){
         if(file == null && bookId == null){
-
             return new ResponseEntity<>(generateFailedResponse("POST", List.of("Failed to upload images")), HttpStatus.BAD_REQUEST);
         }
         booksService.addAnotherImage(bookId, file);
         Map<String, Boolean> successfulResponse = new HashMap<>();
         successfulResponse.put("Succeeded", Boolean.TRUE);
         return new ResponseEntity<>(generateSuccessResponse("POST", successfulResponse), HttpStatus.OK);
-    }
-
-    private List<BookResponse> generateResponseBookList(List<Book> bookLists){
-        bookLists = booksService.findAllBooks();
-        List<BookResponse> responses = new ArrayList<>();
-        for(Book book: bookLists){
-            responses.add(BookResponse.From(book));
-        }
-        return responses;
     }
 
     private static ResponseMessage<Object> generateSuccessResponse(String method, Object obj){
@@ -189,6 +203,15 @@ public class BooksController {
     private static ResponseMessage<Object> generateFailedResponse(String method, List<String> message){
         var responseMessage = new ResponseMessage<Object>();
         responseMessage.setCode(400);
+        responseMessage.setMethod(method);
+        responseMessage.setMessage(message);
+        responseMessage.setData(null);
+        return responseMessage;
+    }
+
+    private static ResponseMessage<Object> generateFailedResponse(int code, String method, List<String> message){
+        var responseMessage = new ResponseMessage<Object>();
+        responseMessage.setCode(code);
         responseMessage.setMethod(method);
         responseMessage.setMessage(message);
         responseMessage.setData(null);

@@ -37,7 +37,6 @@ public class FavoriteController {
     @PostMapping("/add")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     public ResponseEntity<?> makeFavorite(@Valid @RequestBody FavoriteRequestDto favRequestDto, Errors errors){
-        var responseMessage = new ResponseMessage<Object>();
         if(errors.hasErrors()){
             return new ResponseEntity<>(generateFailedResponse(400, "POST", List.of("Please choose one book")), HttpStatus.BAD_REQUEST);
         }
@@ -57,22 +56,19 @@ public class FavoriteController {
     @GetMapping("/my-favorites")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     public ResponseEntity<?> getUserInFavorite(){
-        var responseMessage = new ResponseMessage<Object>();
         var email = servletRequest.getUserPrincipal().getName();
         var user = userRepo.findAppUserByEmail(email)
                 .orElseThrow(RuntimeException::new);
-
         var favList = favoriteService.getUserFavorite(user);
         if(favList.isEmpty()){
-            return new ResponseEntity<>(generateFailedResponse(400,"GET", List.of("You don't have any favorite")), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(generateFailedResponse(404,"GET", List.of("You don't have any favorite")), HttpStatus.NOT_FOUND);
         }
         List<FavoriteResponseInJoin> joinList = new ArrayList<>();
         for(Favorite favorite: favList){
             joinList.add(FavoriteResponseInJoin.From(favorite));
         }
-        List<String> bookData = joinList.stream()
-                        .map(FavoriteResponseInJoin::getTitle).collect(Collectors.toList());
-        log.info("List of book: {}", bookData);
+        log.info("List of book: {}", joinList.stream()
+                .map(item -> item.getTitle()).collect(Collectors.toList()));
         return new ResponseEntity<>(generateSuccessResponse(200,"GET", joinList), HttpStatus.OK);
     }
 

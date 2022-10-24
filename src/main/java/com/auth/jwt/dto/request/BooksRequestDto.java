@@ -12,7 +12,7 @@ import java.util.Set;
 
 
 @Getter @Setter @AllArgsConstructor @NoArgsConstructor
-public class BooksDtoRequest {
+public class BooksRequestDto {
 
     private String title;
     private String authorName;

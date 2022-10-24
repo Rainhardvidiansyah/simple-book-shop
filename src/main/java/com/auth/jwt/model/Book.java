@@ -1,26 +1,33 @@
 package com.auth.jwt.model;
 
-import com.auth.jwt.dto.request.BooksDtoRequest;
+import com.auth.jwt.dto.request.BooksRequestDto;
 import com.auth.jwt.helper.BaseAuditing;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.util.*;
 
 @Entity
+@Table(name = "book")
+@SQLDelete(sql = "UPDATE book SET deleted = true where id = ?")
+@Where(clause = "deleted = false")
 @AllArgsConstructor @NoArgsConstructor
 @Getter @Setter @Builder @ToString
 public class Book  extends BaseAuditing<String> {
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
     private String author;
+    @Column(length = 500)
     private String synopsis;
     private String tags;
+
+    private boolean deleted = Boolean.FALSE;
 
     @ManyToMany(fetch = FetchType.EAGER,
             cascade = {
@@ -34,8 +41,7 @@ public class Book  extends BaseAuditing<String> {
 
 
     @JsonManagedReference
-    @OneToMany(targetEntity = BookImage.class, cascade = CascadeType.ALL)
-    @JoinColumn(name = "book_id")
+    @OneToMany(mappedBy = "book")
     private List<BookImage> bookImage = new ArrayList<>();
 
     private int pages;
@@ -45,6 +51,10 @@ public class Book  extends BaseAuditing<String> {
     private String isbn;
     private String dateOfPublished;
     private String dateOfUpload;
+
+    public void addImage(BookImage bookImage){
+        this.bookImage.add(bookImage);
+    }
 
     public Book(String title, String author, String synopsis, String tags,Set<Category> categories,
                 int pages, Double price, String paperType, int stocks, String isbn,
@@ -63,7 +73,7 @@ public class Book  extends BaseAuditing<String> {
         this.dateOfUpload = dateOfUpload;
     }
 
-    public static Book saveFromDto(BooksDtoRequest booksDto){
+    public static Book saveFromDto(BooksRequestDto booksDto){
         return new Book(booksDto.getTitle(), booksDto.getAuthorName(),
                 booksDto.getSynopsis(), booksDto.getTags(),
                 booksDto.getCategories(), booksDto.getPages(), booksDto.getPrice(),

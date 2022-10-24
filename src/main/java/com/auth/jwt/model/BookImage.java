@@ -3,6 +3,7 @@ package com.auth.jwt.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 
@@ -18,6 +19,8 @@ public class BookImage {
 
     private String imageName;
     @Lob
+    @Type(type="org.hibernate.type.BinaryType")
+    @Column(name = "image_data")
     private byte[] imageData;
     private String contentType;
 
