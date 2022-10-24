@@ -60,8 +60,8 @@ public class CartController {
                 .orElseThrow(RuntimeException::new);
         var cartResponseForUser = cartService.joinCartAndUser(user);
         if(!isNotNull(cartResponseForUser.getCartResponses())){
-            return new ResponseEntity<>(generateFailedResponse("GET", List.of("You haven't added the product to your shopping cart yet")),
-                    HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(generateFailedResponse(404,"GET", List.of("You haven't added the product to your shopping cart yet")),
+                    HttpStatus.NOT_FOUND);
         }
         log.info("User email: {}", user.getEmail());
         log.info("Cart contains: {}", cartResponseForUser);
@@ -105,6 +105,15 @@ public class CartController {
     private ResponseMessage<Object> generateFailedResponse(String method, List<String> message){
         var responseMessage = new ResponseMessage<Object>();
         responseMessage.setCode(400);
+        responseMessage.setMethod(method);
+        responseMessage.setMessage(message);
+        responseMessage.setData(null);
+        return responseMessage;
+    }
+
+    private ResponseMessage<Object> generateFailedResponse(int code, String method, List<String> message){
+        var responseMessage = new ResponseMessage<Object>();
+        responseMessage.setCode(code);
         responseMessage.setMethod(method);
         responseMessage.setMessage(message);
         responseMessage.setData(null);

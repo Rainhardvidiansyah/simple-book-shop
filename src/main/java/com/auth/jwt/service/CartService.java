@@ -39,7 +39,7 @@ public class CartService {
     }
 
     public CartResponseForUser joinCartAndUser(AppUser user){
-        List<Cart> carts = cartRepo.findCartByUser(user);
+        var carts = cartRepo.findCartByUser(user);
         List<CartResponse> cartResponses = new ArrayList<>();
         double totalCost = 0;
         for(Cart cart: carts){
@@ -59,7 +59,7 @@ public class CartService {
 
     @Transactional
     public Cart editCart(Long cartId, int quantity, String note, Long userId) {
-        Optional<Cart> cart = cartRepo.findById(cartId);
+        var cart = cartRepo.findById(cartId);
         var user = userRepo.findById(userId).orElseThrow(
                 RuntimeException::new);
         if (cart.isEmpty()) {
@@ -83,7 +83,7 @@ public class CartService {
         return !note.isEmpty();
     }
 
-    public void deleteUser(AppUser user){
+    public void deleteCartByUser(AppUser user){
         cartRepo.deleteCartByUser(user);
     }
 

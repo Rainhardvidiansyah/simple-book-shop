@@ -6,6 +6,7 @@ import com.auth.jwt.dto.response.CartResponse;
 import com.auth.jwt.dto.response.CartResponseForUser;
 import com.auth.jwt.model.Order;
 import com.auth.jwt.model.OrderItem;
+import com.auth.jwt.repository.CartRepo;
 import com.auth.jwt.repository.OrderRepo;
 import com.auth.jwt.repository.UserRepo;
 import com.auth.jwt.user.AppUser;
@@ -17,7 +18,6 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,8 +29,9 @@ public class OrderService {
     private final OrderItemService orderItemService;
     private final CartService cartService;
     private final UserRepo userRepo;
-
     private final EmailService emailService;
+
+
 
     @Transactional
     public Order makeAnOrder(Long userId, String paymentMethod){
@@ -41,7 +42,6 @@ public class OrderService {
         List<CartResponse> cartResponses = cartResponseForUser.getCartResponses();
         var order = new Order();
         order.setCreatedDate(new Date());
-        //order.setSessionId(sessionId);
         order.setOrdered(false);
         order.setUser(user);
         order.setAddress(user.getAddress());
@@ -67,14 +67,13 @@ public class OrderService {
         String sendEmail = emailService.sendOrderReceipt(order.getId(), book_collection,
                 order.getUser(), order.getTotalPrice(), paymentMethod);
         log.info("Email sent {}", sendEmail);
+        cartService.deleteCartByUser(user);
         return orderRepo.save(order);
     }
 
     //ToDo: Make a method to send email to user that they haven't paid the orders
 
     //ToDo: all orders that have been paid by the user! Send them an email status, and products are ready to ship!
-
-
 
     public List<Order> listOrders(AppUser user) {
         return orderRepo.findAllByUserOrderByCreatedDateDesc(user);

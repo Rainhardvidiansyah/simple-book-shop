@@ -3,11 +3,17 @@ package com.auth.jwt.model;
 
 import com.auth.jwt.user.AppUser;
 import lombok.*;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 
 @Entity
+@Table(name = "cart")
+@SQLDelete(sql = "UPDATE cart SET deleted = true where id = ?")
+@Where(clause = "deleted=false")
 @NoArgsConstructor @AllArgsConstructor
 @Getter @Setter @ToString
 public class Cart {
@@ -23,6 +29,8 @@ public class Cart {
     private Double totalPrice;
 
     private String note;
+
+    private boolean deleted = Boolean.FALSE;
 
     @ManyToOne
     @JoinColumn(name = "book_id")
