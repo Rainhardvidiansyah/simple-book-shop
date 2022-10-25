@@ -1,7 +1,5 @@
 package com.auth.jwt.service;
 
-
-
 import com.auth.jwt.model.Transaction;
 
 import com.auth.jwt.repository.TransactionRepo;
@@ -25,7 +23,7 @@ public class TransactionService {
         var user = userRepo.findById(userId).orElseThrow(()
                 -> new RuntimeException("User not found!"));
 
-        var order = orderService.findOrderId(orderNumber);
+        var order = orderService.findOrderById(orderNumber);
         if(user.getId() != order.getUser().getId()){
             throw new RuntimeException("User is different");
         }

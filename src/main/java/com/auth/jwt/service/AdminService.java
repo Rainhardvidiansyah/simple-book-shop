@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -21,16 +20,14 @@ public class AdminService {
     private final HistoryService historyService;
     private final EmailService emailService;
 
-    public void verifyOrder(String transactionNumber, boolean makeTrue){
-        var transaction = transactionRepo.findTransactionByOrderNumber(transactionNumber);
-        var order = orderRepo.findOrderById(transaction.get().getOrderNumber())
-                .orElse(null);
+    public void verifyOrder(String transactionNumber, boolean changeStatus){
+        var order = findOrderNumber(transactionNumber);
         History history = null;
-        if(order != null){
-            order.setOrdered(makeTrue);
-            history = historyService.saveMyHistory(order.getUser().getId());
+            order.setOrdered(changeStatus);
+            if(order.isOrdered()){
+                history = historyService.saveMyHistory(order, order.getUser());
+            }
             emailService.sendConfirmationSuccess(order.getId(), order.getUser());
-        }
         orderRepo.save(order);
     }
 
@@ -43,7 +40,7 @@ public class AdminService {
         return transactionRepo.findAllByOrderByDateAsc();
     }
 
-    public Optional<Order> findOrderNumber(String orderId){
+    public Order findOrderNumber(String orderId){
         return orderRepo.findOrderById(orderId);
     }
 

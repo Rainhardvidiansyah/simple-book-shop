@@ -5,6 +5,7 @@ import com.auth.jwt.dto.response.OrderReceiptResponseDto;
 import com.auth.jwt.dto.response.ResponseMessage;
 import com.auth.jwt.dto.utils.ErrorUtils;
 import com.auth.jwt.model.Order;
+import com.auth.jwt.repository.UserRepo;
 import com.auth.jwt.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +30,7 @@ import java.util.Map;
 public class OrderController {
 
     private final OrderService orderService;
+    private final UserRepo userRepo;
 
     @PostMapping("/create")
     @PreAuthorize("#userid == principal.id or hasRole('ROLE_ADMIN')")
@@ -48,8 +51,13 @@ public class OrderController {
     @ResponseBody
     @PreAuthorize("#userid == principal.id or hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> getOrder(@RequestParam Long userid){
-        var order = orderService.getOrder(userid);
-        return new ResponseEntity<>(generateSuccessResponse("GET", OrderReceiptResponseDto.From(order)), HttpStatus.OK);
+        var user = userRepo.findById(userid);
+        var allOrder = orderService.listOrders(user.get());
+        List<OrderReceiptResponseDto> orderReceiptResponses = new ArrayList<>();
+        for(Order order: allOrder){
+            orderReceiptResponses.add(OrderReceiptResponseDto.From(order));
+        }
+        return new ResponseEntity<>(generateSuccessResponse("GET", orderReceiptResponses), HttpStatus.OK);
     }
     private ResponseEntity<?> headerResponses(String number_order, String totalCost, String payment_method){
         HttpHeaders headers = new HttpHeaders();

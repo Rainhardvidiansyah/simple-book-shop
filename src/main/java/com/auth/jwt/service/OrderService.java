@@ -6,7 +6,6 @@ import com.auth.jwt.dto.response.CartResponse;
 import com.auth.jwt.dto.response.CartResponseForUser;
 import com.auth.jwt.model.Order;
 import com.auth.jwt.model.OrderItem;
-import com.auth.jwt.repository.CartRepo;
 import com.auth.jwt.repository.OrderRepo;
 import com.auth.jwt.repository.UserRepo;
 import com.auth.jwt.user.AppUser;
@@ -30,7 +29,6 @@ public class OrderService {
     private final CartService cartService;
     private final UserRepo userRepo;
     private final EmailService emailService;
-
 
 
     @Transactional
@@ -92,13 +90,9 @@ public class OrderService {
         throw new OrderNotFoundException("Product not Found!");
     }
 
-    public Order findOrderId(String id){
-        var order = orderRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Number order not Found!"));
-        return order;
+    public Order findOrderById(String id){
+        return orderRepo.findOrderById(id);
     }
-
-    //ToDo: set ordered to by Admin!
 
 
 

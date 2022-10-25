@@ -13,6 +13,5 @@ public interface TransactionRepo extends JpaRepository<Transaction, Long> {
 
     Optional<Transaction> findTransactionByPaymentMethod(String payment_method);
     List<Transaction> findAllByOrderByDateAsc();
-
     Optional<Transaction> findTransactionByOrderNumber(String orderNumber);
 }

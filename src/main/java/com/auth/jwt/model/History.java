@@ -24,7 +24,7 @@ public class History {
     @JsonBackReference
     private AppUser user;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "order_id", referencedColumnName = "id")
     @JsonBackReference
     private Order order;

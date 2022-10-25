@@ -18,6 +18,7 @@ public class Transaction {
 
     private String paymentMethod;
 
+    @Column(unique = true)
     private String orderNumber;
 
     private String senderAccountNumber;
